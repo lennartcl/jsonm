@@ -1,0 +1,19 @@
+{
+  "name": "jsonm",
+  "version": "1.0.0",
+  "description": "Memoization and string interning for reducing bandwidth usage of your JSON-based messages!",
+  "main": "jsonm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lennartcl/jsonm.git"
+  },
+  "author": "Lennart Kats <lennart add c9.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lennartcl/jsonm/issues"
+  },
+  "homepage": "https://github.com/lennartcl/jsonm#readme"
+}
