@@ -114,4 +114,12 @@ describe("jsonm", function() {
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
+    
+    it("packs nested, multi-key objects", function() {
+        var input = { foo: 1, bar: 2, baz: { qux: 3 } };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "bar", "baz", 1, 2, ["qux", "3"], 2]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
 });
