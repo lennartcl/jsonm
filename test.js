@@ -17,11 +17,10 @@ describe("jsonm", function() {
         next();
     });
     
-    it("packs stuff", function() {
+    it("packs and unpacks a basic object", function() {
         var input = { foo: 1 };
         var packed = packer.pack(input);
-        console.log(packed);
         var unpacked = unpacker.unpack(packed);
-        assert.deepEqual(input, unpacked.json);
+        assert.deepEqual(unpacked, input);
     });
 });
