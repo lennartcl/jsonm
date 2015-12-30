@@ -59,6 +59,22 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input);
     });
     
+    it("packs arrays with minus 1 just fine", function() {
+        var input = [-1];
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, "-1", 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs empty arrays just fine", function() {
+        var input = [];
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
     it("packs number strings just fine", function() {
         var input = "1";
         var packed = packer.pack(input);
