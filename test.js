@@ -40,4 +40,20 @@ describe("jsonm", function() {
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
+    
+    it("packs floats just fine", function() {
+        var input = 1.5;
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [0, 0, 1.5]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs multi-key objects", function() {
+        var input = { foo: 1, bar: 2 };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [[0, 2, 1, 3], 0, "foo", 1, "bar", 2]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
 });
