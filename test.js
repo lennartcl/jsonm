@@ -17,10 +17,26 @@ describe("jsonm", function() {
         next();
     });
     
-    it("packs and unpacks a basic object", function() {
+    it("packs small ints as values", function() {
         var input = { foo: 1 };
         var packed = packer.pack(input);
-        assert.deepEqual(packed, [[0, "1"], 0, "foo"]);
+        assert.deepEqual(packed, [[0, 1], 0, "foo", 1]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs large ints as values", function() {
+        var input = { foo: 1000 };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [[0, 1], 0, "foo", 1000]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs arrays with a -1", function() {
+        var input = [0, 1, 2];
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [[-1, 0, 1, 2], 0, 0, 1, 2]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
