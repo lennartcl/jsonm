@@ -20,6 +20,7 @@ describe("jsonm", function() {
     it("packs and unpacks a basic object", function() {
         var input = { foo: 1 };
         var packed = packer.pack(input);
+        assert.deepEqual(packed, [[0, "1"], 0, "foo"]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
