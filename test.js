@@ -3,6 +3,7 @@
 "use server";
 
 var jsonm = require("./jsonm");
+var assert = require("assert");
 
 describe("jsonm", function() {
     var packer;
@@ -17,6 +18,10 @@ describe("jsonm", function() {
     });
     
     it("packs stuff", function() {
-        packer.pack({ foo: 1 });
+        var input = { foo: 1 };
+        var packed = packer.pack(input);
+        console.log(packed);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(input, unpacked.json);
     });
 });
