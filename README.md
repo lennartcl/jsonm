@@ -17,15 +17,15 @@ becomes
 ```
 [0,
     [ "firstName", "lastName", "John", "Doe" ],
-    [ 2, 3, "Anna", "Smith" ],
-    [ 2, 3, "Agent", 7, "isAlias", true ]
+    [ 3, 4, "Anna", "Smith" ],
+    [ 3, 4, "Agent", 8, "isAlias", true ]
 ]
 ```
 
 becomes
 
 ```
-[0,[2,3,4,5],[2,3,6,7],[2,3,8,7]]
+[0,[3,4,5,6],[3,4,7,8],[3,4,9,8]]
 ```
 
 and
@@ -42,7 +42,7 @@ and
 becomes
 
 ```
-[0,[2,3,"Bryan","Fuller"],[2,3,4,"Adams"],[2,3,"Tim","Peterson"]]
+[0,[3,4,"Bryan","Fuller"],[3,4,5,"Adams"],[3,4,"Tim","Peterson"]]
 ```
 
 
