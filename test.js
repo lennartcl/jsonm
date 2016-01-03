@@ -230,7 +230,7 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input);
     });
     
-    it("supports calling unpack multiple times", function() {
+    it("copes with calling unpack multiple times", function() {
         var input = { foo: 1 };
         var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "1", 3]);
@@ -240,9 +240,12 @@ describe("jsonm", function() {
         assert.deepEqual(packed, ["foo", "1", 3]);
         assert.deepEqual(unpacked, input);
         
-        unpacked = unpacker.unpack(packed);
-        assert.deepEqual(unpacker.$getDict(), ["foo", 1]);
-        assert.deepEqual(unpacked, input);
+        try {
+            unpacked = unpacker.unpack(packed);
+        }
+        catch (e) {
+            assert.equal(e.code, "EOLD");
+        }
     });
     
     it("packs JSON strings", function() {
@@ -250,11 +253,17 @@ describe("jsonm", function() {
         var packed = packer.packString(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "2", 3]);
         
-        var unpackedString = unpacker.unpackString(packed);
-        assert.deepEqual(unpackedString, input);
-        
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, JSON.parse(input));
+    });
+    
+    it("packs JSON strings and can unpack them as string", function() {
+        var input = '{"foo":1,"bar":2}';
+        var packed = packer.packString(input);
+        assert.deepEqual(packed, ["foo", "bar", "1", "2", 3]);
+        
+        var unpacked = unpacker.unpackString(packed);
+        assert.deepEqual(unpacked, input);
     });
     
     it("has a symmetrical packString() and unpackString() for strings", function() {

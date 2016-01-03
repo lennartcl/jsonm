@@ -58,6 +58,10 @@ and
 [2,"firstName","lastName","Bryan","Fuller","John","Adams","Tim","Peterson"]
 ```
 
+# Caveats
+
+- sequential messages only
+
 # See also
 
 - JSONH: https://github.com/WebReflection/JSONH
