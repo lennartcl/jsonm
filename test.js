@@ -16,6 +16,10 @@ describe("jsonm", function() {
     beforeEach(function(next) {
         packer = new jsonm.Packer();
         unpacker = new jsonm.Unpacker();
+        packer.$pack = packer.pack;
+        packer.pack = function(object, unpackerConfig) {
+            return this.$pack(object, unpackerConfig || unpacker.getPackerConfig());
+        };
         next();
     });
     
@@ -135,14 +139,38 @@ describe("jsonm", function() {
         var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "2", 3]);
         var unpacked = unpacker.unpack(packed);
-        packer.setDictOptions(unpacker.getDictOptions());
-        
+
         packed = packer.pack(input);
         assert.deepEqual(packed, [3, 5, 4, 6, 7]);
         unpacked = unpacker.unpack(packed);
         
         packed = packer.pack(input);
         assert.deepEqual(packed, [3, 5, 4, 6, 7]);
+        unpacked = unpacker.unpack(packed);
+        
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("handles unpacker gc", function() {
+        var input = { foo: 1, bar: 2 };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "bar", "1", "2", 3]);
+        var unpacked = unpacker.unpack(packed);
+        
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [3, 5, 4, 6, 7]);
+        unpacked = unpacker.unpack(packed);
+        
+        unpacker.$gc(5); // gc memoized 3="foo" and 4="1"
+        
+        packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", 5, "1", 6, 7]);
+        unpacked = unpacker.unpack(packed);
+        
+        unpacker.$gc(7); // gc memoized 4="bar" and 5="2"
+        
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [7, "bar", 8, "2", 9]);
         unpacked = unpacker.unpack(packed);
         
         assert.deepEqual(unpacked, input);
