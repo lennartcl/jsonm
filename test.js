@@ -209,21 +209,51 @@ describe("jsonm", function() {
         packed = packer.pack(input);
         assert.deepEqual(packed, [7, 8, "1", "2", 9]);
         unpacked = unpacker.unpack(packed);
-        
         assert.deepEqual(unpacked, input);
     });
     
     it("packs multi-line strings as normal values", function() {
         var input = "hello there\nthis is\r\na multi-line string";
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_VALUE, "hello there\nthis is\r\na multi-line string", 3]);
         
-        var objectPacked = packer.pack(input);
-        assert.deepEqual(objectPacked, [TYPE_VALUE, "hello there\nthis is\r\na multi-line string", 3]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
     });
     
     it("packs multi-line strings as separate values in string packing mode", function() {
         var input = "hello there\nthis is\r\na multi-line string";
+        var packed = packer.packString(input);
+        assert.deepEqual(packed, [TYPE_STRING, "hello there", "this is\r", "a multi-line string", 3]);
         
-        var stringPacked = packer.packString(input);
-        assert.deepEqual(stringPacked, [TYPE_STRING, "hello there", "this is\r", "a multi-line string", 3]);
-    })
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("supports calling unpack multiple times", function() {
+        var input = { foo: 1 };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "1", 3]);
+        
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacker.$getDict(), ["foo", 1]);
+        assert.deepEqual(packed, ["foo", "1", 3]);
+        assert.deepEqual(unpacked, input);
+        
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacker.$getDict(), ["foo", 1]);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs JSON strings", function() {
+        var input = '{"foo":1,"bar":2}';
+        var packed = packer.packString(input);
+        assert.deepEqual(packed, ["foo", "bar", "1", "2", 3]);
+        
+        var unpackedString = unpacker.unpackString(packed);
+        assert.deepEqual(unpackedString, input);
+        
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, JSON.parse(input));
+    });
 });
