@@ -138,7 +138,11 @@ describe("jsonm", function() {
         packer.setDictOptions(unpacker.getDictOptions());
         
         packed = packer.pack(input);
-        assert.deepEqual(packed, [3, 5, 4, 6, 4]);
+        assert.deepEqual(packed, [3, 5, 4, 6, 7]);
+        unpacked = unpacker.unpack(packed);
+        
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [3, 5, 4, 6, 7]);
         unpacked = unpacker.unpack(packed);
         
         assert.deepEqual(unpacked, input);
