@@ -256,4 +256,13 @@ describe("jsonm", function() {
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, JSON.parse(input));
     });
+    
+    it("has a symmetrical packString() and unpackString() for strings", function() {
+        var input = "hello there\nthis is\r\na multi-line string";
+        var packed = packer.packString(input);
+        assert.deepEqual(packed, [TYPE_STRING, "hello there", "this is\r", "a multi-line string", 3]);
+        
+        var unpacked = unpacker.unpackString(packed);
+        assert.deepEqual(unpacked, input);
+    });
 });
