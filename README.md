@@ -6,34 +6,56 @@ jsonm packs your json and uses memoization powers!
 
 ```
 [
-  {"a":"A","b":"B"},
-  {"a":"C","b":"D"},
-  {"a":"E","b":"F"}
+    { "firstName": "John", "lastName": "Doe" },
+    { "firstName": "Anna", "lastName": "Smith" },
+    { "firstName": "Agent", "lastName": "Smith", isAlias: true }
 ]
 ```
 
 becomes
+
+```
+[0,
+    [ "firstName", "lastName", "John", "Doe" ],
+    [ 2, 3, "Anna", "Smith" ],
+    [ 2, 3, "Agent", 7, "isAlias", true ]
+]
+```
+
+becomes
+
+```
+[0,[2,3,4,5],[2,3,6,7],[2,3,8,7]]
+```
+
+and
+
 
 ```
 [
-  0,
-  0,
-  ["a","b","A","B"],
-  [0,1,"C","D"],
-  [0,1,"E","F"]
+    { "firstName": "Bryan", "lastName": "Fuller" },
+    { "firstName": "John", "lastName": "Adams" },
+    { "firstName": "Tim", "lastName": "Peterson" }
 ]
 ```
 
 becomes
 
 ```
-[0,0,[0,1,2,3],[0,1,4,5],[0,1,6,7]]
+[0,[2,3,"Bryan","Fuller"],[2,3,4,"Adams"],[2,3,"Tim","Peterson"]]
 ```
+
 
 vs
 
 ```
-[2,"a","b","A","B","C","D","E","F"]
+[2,"firstName","lastName","isAlias","John","Doe",false,"Anna","Smith",false,"Agent","Smith",true]
+```
+
+and
+
+```
+[2,"firstName","lastName","Bryan","Fuller","John","Adams","Tim","Peterson"]
 ```
 
 # See also
