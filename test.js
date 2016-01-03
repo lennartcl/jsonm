@@ -6,6 +6,7 @@ var jsonm = require("./jsonm");
 var assert = require("assert");
 var TYPE_ARRAY = 0;
 var TYPE_VALUE = 1;
+var TYPE_STRING = 2;
 
 describe("jsonm", function() {
     var packer;
@@ -211,4 +212,18 @@ describe("jsonm", function() {
         
         assert.deepEqual(unpacked, input);
     });
+    
+    it("packs multi-line strings as normal values", function() {
+        var input = "hello there\nthis is\r\na multi-line string";
+        
+        var objectPacked = packer.pack(input);
+        assert.deepEqual(objectPacked, [TYPE_VALUE, "hello there\nthis is\r\na multi-line string", 3]);
+    });
+    
+    it("packs multi-line strings as separate values in string packing mode", function() {
+        var input = "hello there\nthis is\r\na multi-line string";
+        
+        var stringPacked = packer.packString(input);
+        assert.deepEqual(stringPacked, [TYPE_STRING, "hello there", "this is\r", "a multi-line string", 3]);
+    })
 });
