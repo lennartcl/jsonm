@@ -151,6 +151,16 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input);
     });
     
+    it("handles strings and ints with the same value", function() {
+        var input = { foo: 1, bar: "1" };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "bar", "1", "~1", 3]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        assert(unpacked.foo === 1);
+        assert(unpacked.bar === "1");
+    });
+    
     it("handles unpacker gc", function() {
         var input = { foo: 1, bar: 2 };
         var packed = packer.pack(input);
