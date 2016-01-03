@@ -185,4 +185,29 @@ describe("jsonm", function() {
         
         assert.deepEqual(unpacked, input);
     });
+    
+    it("handles packer gc", function() {
+        var input = { foo: 1, bar: 2 };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "bar", "1", "2", 3]);
+        var unpacked = unpacker.unpack(packed);
+        
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [3, 5, 4, 6, 7]);
+        unpacked = unpacker.unpack(packed);
+        
+        // packer dict is {3:"foo", 4:"1", 5:"bar", 6:"2"}
+        packer.$gc(5, 2); // gc memoized 3="foo" and 4="1"
+        packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", 5, "1", 6, 7]);
+        unpacked = unpacker.unpack(packed);
+        
+        // packer dict is {5:"bar", 6:"2", 7:"foo", 8:"1"}
+        packer.$gc(7, 2); // gc memoized 5="bar" and 6="2"
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [7, "bar", 8, "2", 9]);
+        unpacked = unpacker.unpack(packed);
+        
+        assert.deepEqual(unpacked, input);
+    });
 });
