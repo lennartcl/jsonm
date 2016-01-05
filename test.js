@@ -249,4 +249,57 @@ describe("jsonm", function() {
         packer = new jsonm.Packer();
         sendMessages();
     });
+    
+    it("copes with the unpacker being reset before a message", function() {
+        var input = { foo: 50, bar: 60 };
+        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        
+        unpacker = new jsonm.Unpacker();
+        packed = packer.pack(input, unpacker.getPackerConfig());
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("errors when the packer is reset during a message", function() {
+        var input = { foo: 50, bar: 60 };
+        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        
+        packed = packer.pack(input, unpacker.getPackerConfig());
+        unpacker = new jsonm.Unpacker();
+        try {
+            unpacked = unpacker.unpack(packed);
+        }
+        catch (e) {
+            return;
+        }
+        assert(false);
+    });
+    
+    it("handles messages with more values than the dictionary size", function() {
+        unpacker.setMaxDictSize(50);
+        var input = [];
+        for (var i = 0; i < 50; i++) {
+            input.push(i);
+        }
+        for (var i = 0; i < 49; i++) {
+            input.push(i);
+        }
+        for (var i = 0; i < 51; i++) {
+            input.push(i);
+        }
+        for (var i = 0; i < 120; i++) {
+            input.push(i);
+        }
+        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+
+        packed = packer.pack(input, unpacker.getPackerConfig());
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
 });
