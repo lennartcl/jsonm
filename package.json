@@ -4,7 +4,7 @@
   "description": "Memoization and string interning for reducing bandwidth usage of your JSON-based messages!",
   "main": "jsonm.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/mocha/bin/mocha ."
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/lennartcl/jsonm#readme",
   "devdependencies": {
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
     "assert": "^1.3.0"
   },
 }
