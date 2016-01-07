@@ -1,7 +1,7 @@
 {
   "name": "jsonm",
   "version": "1.0.0",
-  "description": "Memoization and string interning for reducing bandwidth usage of your JSON-based messages!",
+  "description": "json compressor for packing messages with memoization",
   "main": "jsonm.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha .",
