@@ -1,11 +1,13 @@
 jsonm
 =====
 
+_"Listen very carefully, I shall say 'zis only once!"_
+
 jsonm is a performant, safe way to compress JSON messages,
 in similar vein to [jsonh](https://github.com/WebReflection/JSONH)
 and [jsonc](https://github.com/tcorral/JSONC). jsonm makes messages up
-to several orders of magnitude smaller by eliminating common property
-names and values, and using memoization.
+to several orders of magnitude smaller by getting rid of repeated
+names and values.
 
 ## Examples
 

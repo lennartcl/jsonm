@@ -22,7 +22,7 @@ describe("jsonm", function() {
     
     it("packs small ints as string values", function() {
         var input = { foo: 1 };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "1", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -30,7 +30,7 @@ describe("jsonm", function() {
     
     it("packs large ints as string values", function() {
         var input = { foo: 1000 };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "1000", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -38,7 +38,7 @@ describe("jsonm", function() {
     
     it("packs arrays using a -1", function() {
         var input = [0, 1, 2];
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_ARRAY, 0, "1", "2", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -46,7 +46,7 @@ describe("jsonm", function() {
     
     it("packs floats just fine", function() {
         var input = 1.5;
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_VALUE, "1.5", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -54,7 +54,7 @@ describe("jsonm", function() {
     
     it("packs true just fine", function() {
         var input = true;
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_VALUE, true, 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -62,7 +62,7 @@ describe("jsonm", function() {
     
     it("packs arrays with minus 1 just fine", function() {
         var input = [-1];
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_ARRAY, "-1", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -70,7 +70,7 @@ describe("jsonm", function() {
     
     it("packs empty arrays just fine", function() {
         var input = [];
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_ARRAY, 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -78,7 +78,7 @@ describe("jsonm", function() {
     
     it("packs number strings just fine", function() {
         var input = "1";
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_VALUE, "~1", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -86,7 +86,7 @@ describe("jsonm", function() {
     
     it("packs dot number strings just fine", function() {
         var input = ".1";
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_VALUE, "~.1", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -94,7 +94,7 @@ describe("jsonm", function() {
     
     it("packs tilde strings just fine", function() {
         var input = "~1";
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_VALUE, "~~1", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -102,7 +102,7 @@ describe("jsonm", function() {
     
     it("packs tilde tilde strings just fine", function() {
         var input = "~~1";
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_VALUE, "~~~1", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -110,7 +110,7 @@ describe("jsonm", function() {
     
     it("packs multi-key objects", function() {
         var input = { foo: 1, bar: 2 };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "2", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -118,7 +118,7 @@ describe("jsonm", function() {
     
     it("packs nested, multi-key objects", function() {
         var input = { foo: 1, bar: 2, baz: { qux: 3 } };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "bar", "baz", "1", "2", ["qux", "3"], 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -126,25 +126,25 @@ describe("jsonm", function() {
     
     it("packs nested arrays and objects", function() {
         var input = [{a:[[{b:12}]]}];
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
     
     it("uses memoization the second time", function() {
         var input = { foo: 1, bar: 2 };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "2", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
 
-        packed = packer.pack(input, unpacker.getPackerConfig());
+        packed = packer.pack(input);
         assert.deepEqual(packed, [3, 4, 5, 6, 1]);
-        assert.deepEqual(unpacker.$getDict(), ["foo", "bar", 1, 2]);
+        assert.deepEqual(unpacker.$getDict(), [,,,"foo", "bar", 1, 2]);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        packed = packer.pack(input, unpacker.getPackerConfig());
+        packed = packer.pack(input);
         assert.deepEqual(packed, [3, 4, 5, 6, 2]);
         unpacked = unpacker.unpack(packed);
         
@@ -153,7 +153,7 @@ describe("jsonm", function() {
     
     it("handles strings and ints with the same value", function() {
         var input = { foo: 1, bar: "1" };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "~1", 0]);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
@@ -163,7 +163,7 @@ describe("jsonm", function() {
     
     it("packs multi-line strings as normal values", function() {
         var input = "hello there\nthis is\r\na multi-line string";
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, [TYPE_VALUE, "hello there\nthis is\r\na multi-line string", 0]);
         
         var unpacked = unpacker.unpack(packed);
@@ -172,7 +172,7 @@ describe("jsonm", function() {
     
     it("packs multi-line strings as separate values in string packing mode", function() {
         var input = "hello there\nthis is\r\na multi-line string";
-        var packed = packer.packString(input, unpacker.getPackerConfig());
+        var packed = packer.packString(input);
         assert.deepEqual(packed, [TYPE_STRING, "hello there", "this is\r", "a multi-line string", 0]);
         
         var unpacked = unpacker.unpack(packed);
@@ -181,11 +181,11 @@ describe("jsonm", function() {
     
     it("copes with calling unpack multiple times", function() {
         var input = { foo: 1 };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         assert.deepEqual(packed, ["foo", "1", 0]);
         
         var unpacked = unpacker.unpack(packed);
-        assert.deepEqual(unpacker.$getDict(), ["foo", 1]);
+        assert.deepEqual(unpacker.$getDict(), [,,,"foo", 1]);
         assert.deepEqual(unpacked, input);
         
         try {
@@ -198,7 +198,7 @@ describe("jsonm", function() {
     
     it("packs JSON strings", function() {
         var input = '{"foo":1,"bar":2}';
-        var packed = packer.packString(input, unpacker.getPackerConfig());
+        var packed = packer.packString(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "2", 0]);
         
         var unpacked = unpacker.unpack(packed);
@@ -207,7 +207,7 @@ describe("jsonm", function() {
     
     it("packs JSON strings and can unpack them as string", function() {
         var input = '{"foo":1,"bar":2}';
-        var packed = packer.packString(input, unpacker.getPackerConfig());
+        var packed = packer.packString(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "2", 0]);
         
         var unpacked = unpacker.unpackString(packed);
@@ -216,18 +216,52 @@ describe("jsonm", function() {
     
     it("has a symmetrical packString() and unpackString() for strings", function() {
         var input = "hello there\nthis is\r\na multi-line string";
-        var packed = packer.packString(input, unpacker.getPackerConfig());
+        var packed = packer.packString(input);
         assert.deepEqual(packed, [TYPE_STRING, "hello there", "this is\r", "a multi-line string", 0]);
         
         var unpacked = unpacker.unpackString(packed);
         assert.deepEqual(unpacked, input);
     });
     
+    it("has no issues going over a very small dictionary size", function() {
+        unpacker.setMaxDictSize(6);
+        packer.setMaxDictSize(6);
+        var input = [1, 2, 3, 4];
+        var packed = packer.pack(input);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        
+        input = [7, 8, 1, 2];
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, "7", "8", 3, 4, 1]);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        
+        input = [1, 2, 5, 6, 1, 5];
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, 3, 4, "5", "6", "1", 3, 2]);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        
+        input = { 5: 5, 10: 11, 12: 13 };
+        packed = packer.pack(input);
+        assert.deepEqual(packed, ["~5", "~10", "~12", 3, "11", "13", 3]);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        
+        input = { 5: 5, 10: 11, 12: 14 };
+        packed = packer.pack(input);
+        assert.deepEqual(packed, [6, 7, 8, "5", 3, "14", 4]);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
     it("has no issues going over the dictionary size", function() {
         unpacker.setMaxDictSize(99);
+        packer.setMaxDictSize(99);
         for (var i = 0; i < 500; i++) {
             var input = { foo: 50, bar: 60, baz: i, qux: i + 1 };
-            var packed = packer.pack(input, unpacker.getPackerConfig());
+            var packed = packer.pack(input);
             var unpacked = unpacker.unpack(packed);
             assert.deepEqual(unpacked, input);
             assert(unpacker.$getDict().length <= 120, unpacker.$getDict().length);
@@ -239,7 +273,7 @@ describe("jsonm", function() {
         function sendMessages() {
             for (var i = 0; i < 100; i++) {
                 var input = { foo: 50, bar: 60, baz: i, qux: i + 1 };
-                var packed = packer.pack(input, unpacker.getPackerConfig());
+                var packed = packer.pack(input);
                 var unpacked = unpacker.unpack(packed);
                 assert.deepEqual(unpacked, input);
             }
@@ -250,25 +284,13 @@ describe("jsonm", function() {
         sendMessages();
     });
     
-    it("copes with the unpacker being reset before a message", function() {
-        var input = { foo: 50, bar: 60 };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
-        var unpacked = unpacker.unpack(packed);
-        assert.deepEqual(unpacked, input);
-        
-        unpacker = new jsonm.Unpacker();
-        packed = packer.pack(input, unpacker.getPackerConfig());
-        unpacked = unpacker.unpack(packed);
-        assert.deepEqual(unpacked, input);
-    });
-    
     it("errors when the packer is reset during a message", function() {
         var input = { foo: 50, bar: 60 };
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        packed = packer.pack(input, unpacker.getPackerConfig());
+        packed = packer.pack(input);
         unpacker = new jsonm.Unpacker();
         try {
             unpacked = unpacker.unpack(packed);
@@ -279,8 +301,50 @@ describe("jsonm", function() {
         assert(false);
     });
     
-    it("handles messages with more values than the dictionary size", function() {
+    it("handles small messages with more values than the dictionary size", function() {
+        unpacker.setMaxDictSize(5);
+        packer.setMaxDictSize(5);
+        var input = [1,2,3,4,5,1,2,3,4,5,6];
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, "1", "2", "3", "4", "5", 3, 4, 5, 6, 7, "6", 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+
+        packed = packer.pack(input);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("handles small messages with more values than the dictionary size (2)", function() {
+        unpacker.setMaxDictSize(4);
+        packer.setMaxDictSize(4);
+        var input = [1,2,3,4,1,2,3,4,1];
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, "1", "2", "3", "4", 3, 4, 5, 6, 3, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+
+        packed = packer.pack(input);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("handles small messages with more values than the dictionary size (3)", function() {
+        unpacker.setMaxDictSize(3);
+        packer.setMaxDictSize(3);
+        var input = [1,2,3,4,1,2,3,4,1];
+        var packed = packer.pack(input);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+
+        packed = packer.pack(input);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("handles large messages with more values than the dictionary size", function() {
         unpacker.setMaxDictSize(50);
+        packer.setMaxDictSize(50);
         var input = [];
         for (var i = 0; i < 50; i++) {
             input.push(i);
@@ -294,11 +358,11 @@ describe("jsonm", function() {
         for (var i = 0; i < 120; i++) {
             input.push(i);
         }
-        var packed = packer.pack(input, unpacker.getPackerConfig());
+        var packed = packer.pack(input);
         var unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
 
-        packed = packer.pack(input, unpacker.getPackerConfig());
+        packed = packer.pack(input);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
