@@ -1,3 +1,3 @@
-module.exports.Packer = require("./lib/jsonm/packer").Packer;
+module.exports.Packer = require("./lib/packer").Packer;
 
-module.exports.Unpacker = require("./lib/jsonm/unpacker").Unpacker;
+module.exports.Unpacker = require("./lib/unpacker").Unpacker;
