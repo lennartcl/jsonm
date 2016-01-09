@@ -366,4 +366,64 @@ describe("jsonm", function() {
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
+    
+    it("packs null", function() {
+        var input = null;
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_VALUE, null, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert(unpacked === null, JSON.stringify(unpacked));
+    });
+    
+    it("packs null inside an object", function() {
+        var input = { foo: null };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", null, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
+        assert(unpacked.foo === null);
+    });
+    
+    it("packs undefined", function() {
+        var input = undefined;
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_VALUE, undefined, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert(unpacked === undefined, JSON.stringify(unpacked));
+    });
+    
+    it("packs undefined inside an object", function() {
+        var input = { foo: undefined };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", undefined, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
+        assert(unpacked.foo === undefined);
+    });
+    
+    it("packs empty string", function() {
+        var input = "";
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_VALUE, "", 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.equal(unpacked, "");
+    });
+    
+    it("packs empty string inside an object", function() {
+        var input = { foo: "" };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "", 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
+        assert(unpacked.foo === "");
+    });
+    
+    it("packs multiple empty strings inside an object", function() {
+        var input = { foo: "", bar: "" };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "bar", "", 5, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
+        assert(unpacked.foo === "");
+    });
 });
