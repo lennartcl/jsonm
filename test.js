@@ -426,4 +426,18 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
         assert(unpacked.foo === "");
     });
+    
+    it("copes with calling packString on a non-string, why not", function() {
+        var input = 5;
+        var packed = packer.packString(input);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("copes with calling packString on a null, why not", function() {
+        var input = null;
+        var packed = packer.packString(input);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
 });
