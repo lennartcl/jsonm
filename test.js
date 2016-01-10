@@ -443,7 +443,7 @@ describe("jsonm", function() {
     
     it("unpacks objects in strings", function() {
         var input = 42;
-        var packedString = packer.stringify(input);
+        var packedString = JSON.stringify(packer.pack(input));
         assert.deepEqual(packedString, '[1,"42",0]');
         var unpacked = unpacker.unpack(packedString);
         assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
