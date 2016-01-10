@@ -57,6 +57,12 @@ becomes
 [2,[3,4,"Bryan","Fuller"],[3,4,5,"Adams"],[3,4,"Tim","Peterson"]]
 ```
 
+## Installation
+
+```
+$ npm install --save jsonm
+```
+
 ## Usage
 
 jsonm is designed for sending messages between a sender and a receiver.
