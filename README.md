@@ -13,23 +13,25 @@ names and values.
 
 ```
 [
-    { "firstName": "John", "lastName": "Doe" },
+    { "firstName": "Francis", "lastName": "Doe" },
     { "firstName": "Anna", "lastName": "Smith" },
-    { "firstName": "Agent", "lastName": "Smith", isAlias: true }
+    { "firstName": "Agent", "lastName": "Smith", isAlias: true },
+    { "firstName": "Anna", "lastName": "Francis" }
 ]
 ```
 
 becomes
 
 ```
-[0,
-    [ "firstName", "lastName", "John", "Doe" ],
-    [ 3, 4, "Anna", "Smith" ],
-    [ 3, 4, "Agent", 8, "isAlias", true ]
+[ 0,
+    ["firstName", "lastName", "Francis", "Doe"],
+    [3, 4, "Anna", "Smith"],
+    [3, 4, "isAlias", "Agent", 8, true],
+    [3, 4, 7, 5]
 ]
 ```
 
-Note how common substrings `"firstName"`, `"lastName"`, and `"John"` are not
+Note how common substrings like `"firstName"`, `"lastName"`, and `"John"` are not
 repeated but replaced by a dictionary index.
 
 The dictionary is built up on the fly and re-used for future messages sent.
@@ -37,24 +39,25 @@ When sending the same message again it'll be even smaller:
 
 
 ```
-[1,[3,4,5,6],[3,4,7,8],[3,4,9,8]]
+[0,[3,4,5,6],[3,4,7,8],[3,4,9,10,8,11],[3,4,7,5],1]
 ```
 
-Other messages that come after that also benefit from the dictionary:
+Messages coming later also benefit from the dictionary:
 
 
 ```
 [
     { "firstName": "Bryan", "lastName": "Fuller" },
-    { "firstName": "John", "lastName": "Adams" },
-    { "firstName": "Tim", "lastName": "Peterson" }
+    { "firstName": "Anna", "lastName": "Adams" },
+    { "firstName": "Tim", "lastName": "Peterson" },
+    { "firstName": "Francis", "lastName": "Peterson" }
 ]
 ```
 
 becomes
 
 ```
-[2,[3,4,"Bryan","Fuller"],[3,4,5,"Adams"],[3,4,"Tim","Peterson"]]
+[0,[3,4,"Bryan","Fuller"],[3,4,7,"Adams"],[3,4,"Tim","Peterson"],[3,4,5,16]]
 ```
 
 ## Installation
