@@ -73,12 +73,32 @@ _Receiver, unpacking a message:_
 
 ```
 var unpacker = new jsonm.Unpacker();
-unpacker.unpack(message);
+unpacker.unpack(packed); // returns message
 ```
 
 Note that both the packer and unpacker maintain a stateful dictionary.
 Don't lose them! But when the connection ends just start over with a new
 packer and unpacker.
+
+### Working with Strings
+
+jsonm provides `packString()` for dealing with messages in string form.
+
+`packString()` can be used to efficiently pack multi-line strings. For
+example, a string `"foo\nbar"` is packed as if `["foo", "bar"]` was packed:
+
+```
+var packed = packer.packString("foo\nbar");
+unpacker.unpack(packed); // returns "foo\nbar"
+```
+
+`packString()` can also efficiently pack JSON objects in string format,
+internally parsing and stringifying them:
+
+```
+var packed = packer.packString('{"foo":"bar"}');
+unpacker.unpack(packed); // returns '{"foo":"bar"}'
+```
 
 ## Related Projects
 
