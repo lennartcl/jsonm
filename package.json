@@ -5,7 +5,7 @@
   "main": "jsonm.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha .",
-    "browserify": "mkdir -p build; node_modules/browserify/bin/cmd.js lib/packer.js -o build/packer.js && node_modules/browserify/bin/cmd.js lib/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js jsonm.js -o build/jsonm.js",
+    "browserify": "mkdir -p build; node_modules/browserify/bin/cmd.js -s packer lib/packer.js -o build/packer.js && node_modules/browserify/bin/cmd.js -s unpacker lib/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js -s jsonm jsonm.js -o build/jsonm.js",
     "postinstall": "npm run browserify"
   },
   "repository": {
