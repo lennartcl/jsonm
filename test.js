@@ -460,4 +460,12 @@ describe("jsonm", function() {
         assert(!unpacked.bar);
         assert.equal(unpacked.baz, 3);
     });
+    
+    it("keeps message and stack in errors", function() {
+        var input = new Error("Hello thar");
+        var packed = packer.pack(input);
+        var unpacked = unpacker.unpack(packed);
+        assert.equal(unpacked.message, "Hello thar");
+        assert(unpacked.stack);
+    });
 });
