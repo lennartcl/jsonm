@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node_modules/mocha/bin/mocha .",
     "browserify": "mkdir -p build; node_modules/browserify/bin/cmd.js -s packer lib/packer.js -o build/packer.js && node_modules/browserify/bin/cmd.js -s unpacker lib/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js -s jsonm jsonm.js -o build/jsonm.js",
-    "postinstall": "npm run browserify"
+    "postinstall": "[ -e node_modules/browserify ] && npm run browserify"
   },
   "repository": {
     "type": "git",
