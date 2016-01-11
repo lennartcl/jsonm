@@ -448,4 +448,16 @@ describe("jsonm", function() {
         var unpacked = unpacker.unpack(packedString);
         assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
     });
+    
+    it("ignores properties from prototypes", function() {
+        function Foo() {}
+        Foo.prototype.bar = 5;
+        var input = new Foo();
+        input.baz = 3;
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["baz","3",0]);
+        var unpacked = unpacker.unpack(packed);
+        assert(!unpacked.bar);
+        assert.equal(unpacked.baz, 3);
+    });
 });

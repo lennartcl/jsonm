@@ -11,6 +11,8 @@ names and values.
 
 ## Examples
 
+json packs
+
 ```
 [
     { "firstName": "Francis", "lastName": "Doe" },
@@ -20,7 +22,7 @@ names and values.
 ]
 ```
 
-becomes
+into 
 
 ```
 [ 0,
@@ -32,7 +34,8 @@ becomes
 ```
 
 Note how common substrings like `"firstName"`, `"lastName"`, and `"John"` are not
-repeated but replaced by a dictionary index.
+repeated but replaced by a dictionary index. jsonm also represents objects
+using arrays to avoid quotation signs in pure JSON (e.g., `{"3":"Anna"}`)
 
 The dictionary is built up on the fly and re-used for future messages sent.
 When sending the same message again it'll be even smaller:
@@ -43,7 +46,6 @@ When sending the same message again it'll be even smaller:
 ```
 
 Messages coming later also benefit from the dictionary:
-
 
 ```
 [
