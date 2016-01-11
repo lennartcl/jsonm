@@ -540,4 +540,18 @@ describe("jsonm", function() {
         var unpacked2 = unpacker.unpack(packed2);
         assert.deepEqual(unpacked2, input);
     });
+    
+    it("packs error objects with false property values", function() {
+        var error = new Error("Hello thar");
+        error.killed = false;
+        var input = [error, false, 1, 1];
+        var packed = packer.pack(input);
+        var unpacked = unpacker.unpack(packed);
+        assert.equal(unpacked[0].message, "Hello thar");
+        assert(unpacked[0].stack);
+        assert.equal(unpacked[0].killed, false);
+        assert.equal(unpacked[1], false);
+        assert.equal(unpacked[2], 1);
+        assert.equal(unpacked[3], 1);
+    });
 });
