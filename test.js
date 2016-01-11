@@ -468,4 +468,27 @@ describe("jsonm", function() {
         assert.equal(unpacked.message, "Hello thar");
         assert(unpacked.stack);
     });
+    
+    it("copes with messages in the wrong order", function(next) {
+        var input1 = { id: 1, text: "foo" };
+        var packed1 = packer.pack(input1);
+        var input2 = { id: 2, text: "foo" };
+        var packed2 = packer.pack(input2);
+        var input3 = { id: 3, text: "foo" };
+        var packed3 = packer.pack(input3);
+        
+        unpacker.unpack(packed3, function(err, unpacked3) {
+            if (err) return next(err);
+            assert.deepEqual(unpacked3, input3);
+            next();
+        });
+        
+        unpacker.unpack(packed2, function(err, unpacked2) {
+            if (err) return next(err);
+            assert.deepEqual(unpacked2, input2);
+        });
+        
+        var unpacked1 = unpacker.unpack(packed1);
+        assert.deepEqual(unpacked1, input1);
+    });
 });
