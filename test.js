@@ -370,7 +370,7 @@ describe("jsonm", function() {
     it("packs null", function() {
         var input = null;
         var packed = packer.pack(input);
-        assert.deepEqual(packed, [TYPE_VALUE, null, 0]);
+        assert.deepEqual(packed, null);
         var unpacked = unpacker.unpack(packed);
         assert(unpacked === null, JSON.stringify(unpacked));
     });
@@ -387,7 +387,7 @@ describe("jsonm", function() {
     it("packs undefined", function() {
         var input = undefined;
         var packed = packer.pack(input);
-        assert.deepEqual(packed, [TYPE_VALUE, undefined, 0]);
+        assert.deepEqual(packed, undefined);
         var unpacked = unpacker.unpack(packed);
         assert(unpacked === undefined, JSON.stringify(unpacked));
     });
@@ -490,5 +490,54 @@ describe("jsonm", function() {
         
         var unpacked1 = unpacker.unpack(packed1);
         assert.deepEqual(unpacked1, input1);
+    });
+    
+    it("packs strings 1 level deep", function() {
+        var input = ["foo\nbar", { deeper: "baz\nqux" }];
+        var packed = packer.pack(input, { packStringDepth: 1 });
+        assert.deepEqual(packed, [TYPE_ARRAY, [TYPE_STRING, "foo", "bar"], ["deeper", "baz\nqux"], 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs strings 2 levels deep", function() {
+        var input = ["foo\nbar", { deeper: "baz\nqux" }];
+        var packed = packer.pack(input, { packStringDepth: 2 });
+        assert.deepEqual(packed, [TYPE_ARRAY, [TYPE_STRING, "foo", "bar"], ["deeper", [TYPE_STRING, "baz", "qux"]], 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("copes with null input to unpacker", function() {
+        assert.equal(unpacker.unpack(null), null);
+    });
+    
+    it("packs arrays with nulls", function() {
+        var input = [1,2,null,4,5,null,6];
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, "1", "2", null, "4", "5", 5, "6", 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs arrays with true and false", function() {
+        var input = [true,false,true,false];
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, [TYPE_ARRAY, true, false, 3, 4, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs objects with null and true and false", function() {
+        var input = { null: null, true: true, false: false };
+        var packed = packer.pack(input);
+        assert.deepEqual(packed, ["null", "true", "false", null, true, false, 0]);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+        
+        var packed2 = packer.pack(input);
+        assert.deepEqual(packed2, [3, 4, 5, 6, 7, 8, 1]);
+        var unpacked2 = unpacker.unpack(packed2);
+        assert.deepEqual(unpacked2, input);
     });
 });
