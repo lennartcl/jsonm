@@ -1,11 +1,11 @@
 {
   "name": "jsonm",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "json compressor for packing messages with memoization",
   "main": "jsonm.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha .",
-    "browserify": "mkdir -p build; node_modules/browserify/bin/cmd.js -s packer lib/packer.js -o build/packer.js && node_modules/browserify/bin/cmd.js -s unpacker lib/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js -s jsonm jsonm.js -o build/jsonm.js"
+    "browserify": "mkdir -p build; browserify -s packer lib/packer.js -o build/packer.js && browserify -s unpacker lib/unpacker.js -o build/unpacker.js && browserify -s jsonm jsonm.js -o build/jsonm.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,6 @@
   "homepage": "https://github.com/lennartcl/jsonm#readme",
   "devDependencies": {
     "mocha": "^2.3.4",
-    "assert": "^1.3.0",
-    "browserify": "^12.0.1"
+    "assert": "^1.3.0"
   }
 }
