@@ -9,6 +9,11 @@ and [jsonc](https://github.com/tcorral/JSONC). jsonm makes messages up
 to several orders of magnitude smaller by getting rid of repeated
 names and values.
 
+jsonm is best friends with libraries like [socket.io](http://socket.io/) that
+maintain a persistent connection between a client and a server. Modern
+browsers can gzip messages sent over websockets, and jsonm can make them
+even smaller for maximum responsiveness of web applications.
+
 ## Examples
 
 json packs
