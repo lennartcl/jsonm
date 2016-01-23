@@ -4,8 +4,8 @@ jsonm
 _"Listen very carefully, I shall say 'zis only once!"_
 
 jsonm is a performant, safe way to compress JSON messages,
-in similar vein to [jsonh](https://github.com/WebReflection/JSONH)
-and [jsonc](https://github.com/tcorral/JSONC). jsonm makes messages up
+in similar vein to [jsonc](https://github.com/tcorral/JSONC) and
+[jsonh](https://github.com/WebReflection/JSONH). jsonm makes messages up
 to several orders of magnitude smaller by getting rid of repeated
 names and values.
 
@@ -118,8 +118,9 @@ unpacker.unpack(packed); // returns '{"foo":"bar"}'
 
 ## Related Projects
 
-- JSONH: https://github.com/WebReflection/JSONH
 - JSONC: https://github.com/tcorral/JSONC
+- JSONH: https://github.com/WebReflection/JSONH
+- JSONR: http://www.cliws.com/e/06pogA9VwXylo_GknPEeFA/
 
 These projects pack uniform JavaScript objects, eliminating the
 need for repeating the keys of each object. As an example, JSONH can pack
@@ -139,6 +140,6 @@ into
 [3,"firstName","lastName","isAlias","John","Doe",false,"Anna","Smith",false,"Agent","Smith",true]
 ```
 
-JSONH and JSONM don't apply memoization and only help with uniform data.
-Unlike jsom, however, they are stateless, which can make it easier to use
-them in some cases.
+JSONH, JSONM, and JSONR don't apply memoization and only help with uniform data
+or data with a recurring scheme. Unlike jsom, however, they are stateless, which
+can make it easier to use them in some cases.
