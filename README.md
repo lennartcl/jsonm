@@ -131,9 +131,9 @@ need for repeating the keys of each object. As an example, JSONH can pack
 
 ```
 [
-    { "firstName": "John", "lastName": "Doe", isAlias: false },
-    { "firstName": "Anna", "lastName": "Smith", isAlias: false },
-    { "firstName": "Agent", "lastName": "Smith", isAlias: true }
+    { "firstName": "John", "lastName": "Doe", "isAlias": false },
+    { "firstName": "Anna", "lastName": "Smith", "isAlias": false },
+    { "firstName": "Agent", "lastName": "Smith", "isAlias": true }
 ]
 ```
 
