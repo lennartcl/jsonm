@@ -123,11 +123,10 @@ unpacker.unpack(packed); // returns '{"foo":"bar"}'
 
 - JSONC: https://github.com/tcorral/JSONC
 - JSONH: https://github.com/WebReflection/JSONH
-- JSONR: http://www.cliws.com/e/06pogA9VwXylo_GknPEeFA/
+- JSONR: https://github.com/dogada/RJSON
 
 These projects pack uniform JavaScript objects, eliminating the
 need for repeating the keys of each object. As an example, JSONH can pack
-
 
 ```
 [
