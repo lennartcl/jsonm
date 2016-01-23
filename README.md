@@ -16,13 +16,13 @@ even smaller for maximum responsiveness of web applications.
 
 ## Examples
 
-json packs
+jsonm packs
 
 ```
 [
     { "firstName": "Francis", "lastName": "Doe" },
     { "firstName": "Anna", "lastName": "Smith" },
-    { "firstName": "Agent", "lastName": "Smith", isAlias: true },
+    { "firstName": "Agent", "lastName": "Smith", "isAlias": true },
     { "firstName": "Anna", "lastName": "Francis" }
 ]
 ```
