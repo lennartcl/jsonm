@@ -67,6 +67,10 @@ becomes
 [0,[3,4,"Bryan","Fuller"],[3,4,7,"Adams"],[3,4,"Tim","Peterson"],[3,4,5,16]]
 ```
 
+By avoiding repetition, jsonm can for example help decrease the size of messages
+sent from a web server to the client. It effectively leaves out all information
+the client already knows about.
+
 ## Installation
 
 ```
