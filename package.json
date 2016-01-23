@@ -1,6 +1,6 @@
 {
   "name": "jsonm",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "json compressor for packing messages with memoization",
   "main": "jsonm.js",
   "scripts": {

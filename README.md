@@ -45,7 +45,6 @@ using arrays to avoid quotation signs in pure JSON (e.g., `{"3":"Anna"}`)
 The dictionary is built up on the fly and re-used for future messages sent.
 When sending the same message again it'll be even smaller:
 
-
 ```
 [0,[3,4,5,6],[3,4,7,8],[3,4,9,10,8,11],[3,4,7,5],1]
 ```
