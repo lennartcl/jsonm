@@ -145,3 +145,7 @@ into
 JSONH, JSONM, and JSONR don't apply memoization and only help with uniform data
 or data with a recurring scheme. Unlike jsom, however, they are stateless, which
 can make it easier to use them in some cases.
+
+# License
+
+MIT
