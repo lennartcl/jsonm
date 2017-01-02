@@ -84,15 +84,15 @@ The sender packs messages and the receiver unpacks them.
 _Sender, packing a message:_
 
 ```
-var packer = new jsonm.Packer();
-var packed = packer.pack(message);
+const packer = new jsonm.Packer();
+let packedMessage = packer.pack(message);
 ```
 
 _Receiver, unpacking a message:_
 
 ```
-var unpacker = new jsonm.Unpacker();
-unpacker.unpack(packed); // returns message
+const unpacker = new jsonm.Unpacker();
+let message = unpacker.unpack(packedMessage);
 ```
 
 Note that both the packer and unpacker maintain a stateful dictionary.
@@ -107,7 +107,7 @@ jsonm provides `packString()` for dealing with messages in string form.
 example, a string `"foo\nbar"` is packed as if `["foo", "bar"]` was packed:
 
 ```
-var packed = packer.packString("foo\nbar");
+let packed = packer.packString("foo\nbar");
 unpacker.unpack(packed); // returns "foo\nbar"
 ```
 
@@ -115,7 +115,7 @@ unpacker.unpack(packed); // returns "foo\nbar"
 internally parsing and stringifying them:
 
 ```
-var packed = packer.packString('{"foo":"bar"}');
+let packed = packer.packString('{"foo":"bar"}');
 unpacker.unpack(packed); // returns '{"foo":"bar"}'
 ```
 
