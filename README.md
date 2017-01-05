@@ -3,18 +3,24 @@ jsonm
 
 _"Listen very carefully, I shall say 'zis only once!"_
 
-jsonm is a performant, safe way to compress JSON messages,
-in similar vein to [jsonc](https://github.com/tcorral/JSONC) and
-[jsonh](https://github.com/WebReflection/JSONH). jsonm makes messages up
-to several orders of magnitude smaller by getting rid of repeated
-names and values.
+jsonm is a fast and safe way to compress JSON messages using memoization.
+jsonm makes messages up to several orders of magnitude smaller by getting rid
+of repeated names and values.
 
-jsonm is best friends with libraries like [socket.io](http://socket.io/) that
-maintain a persistent connection between a client and a server. Modern
-browsers can gzip messages sent over websockets, and jsonm can make them
+jsonm is best friends with **websocket** libraries like [socket.io](http://socket.io/).
+Modern browsers can **gzip** messages sent over websockets, and jsonm can make them
 even smaller for maximum responsiveness of web applications.
 
-## Examples
+## Installation
+
+```
+$ npm install --save jsonm
+```
+
+In the client, jsonm works well with webpack or browserify.
+Our npm distribution also includes a prepackaged client-side version in build/jsonm.js.
+
+## Compression Examples
 
 jsonm packs
 
@@ -69,12 +75,6 @@ becomes
 By avoiding repetition, jsonm can for example help decrease the size of messages
 sent from a web server to the client. It effectively leaves out all information
 the client already knows about.
-
-## Installation
-
-```
-$ npm install --save jsonm
-```
 
 ## Usage
 
