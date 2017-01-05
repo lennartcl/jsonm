@@ -6,11 +6,11 @@
  * multiple messages, getting increasing benefit from memoization
  * over time. This CLI tool only compresses one message.
  */
-var optimist = require("optimist");
-var fs = require("fs");
-var jsonm = require("../jsonm");
+const optimist = require("optimist");
+const fs = require("fs");
+const jsonm = require("../src");
 
-var args = optimist
+const args = optimist
     .alias('p', 'pack')
     .describe('p', 'pack JSON')
     .alias('u', 'unpack')
@@ -24,10 +24,10 @@ if (args.help || (!args.pack && !args.unpack)) {
     process.exit();
 }
 
-var source = args.pack || args.unpack;
+let source = args.pack || args.unpack;
 if (source === true)
     source = "/dev/stdin";
-var file = JSON.parse(fs.readFileSync(source, "utf8"));
-var result = args.pack ? jsonm.Packer().pack(file) : jsonm.Unpacker().unpack(file);
+const file = JSON.parse(fs.readFileSync(source, "utf8"));
+const result = args.pack ? jsonm.Packer().pack(file) : jsonm.Unpacker().unpack(file);
 
 console.log(JSON.stringify(result));
