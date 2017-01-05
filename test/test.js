@@ -555,4 +555,27 @@ describe("jsonm", function() {
         assert.equal(unpacked[2], 1);
         assert.equal(unpacked[3], 1);
     });
+    
+    it("supports reset()", () => {
+        const input = { foo: "bar" };
+        unpacker.unpack(packer.pack(input));
+        
+        const memoized = packer.pack(input);
+        assert.deepEqual(memoized, [3, 4, 1]);
+
+        packer.reset();
+        console.log(packer.$getDict());
+        
+        const notMemoized = packer.pack(input);
+        const notMemoizedCopy = Object.assign([], notMemoized);
+        assert.equal(notMemoized[0], "foo");
+        assert.equal(notMemoized[1], "bar");
+        
+        const unpacked1 = unpacker.unpack(notMemoized);
+        assert.deepEqual(unpacked1, input);
+        
+        const unpacker2 = new jsonm.Unpacker();
+        const unpacked2 = unpacker2.unpack(notMemoizedCopy);
+        assert.deepEqual(unpacked2, input);
+    });
 });

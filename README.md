@@ -96,8 +96,15 @@ let message = unpacker.unpack(packedMessage);
 ```
 
 Note that both the packer and unpacker maintain a stateful dictionary.
-Don't lose them! But when the connection ends just start over with a new
-packer and unpacker.
+Don't lose them! When the connection ends, create a new packer or call
+`packer.reset()`.
+
+```
+let packer = new jsonm.Packer();
+packer.pack(message);
+// ... disconnected!
+packer.reset();
+```
 
 ### Working with Strings
 

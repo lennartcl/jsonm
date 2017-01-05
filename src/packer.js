@@ -4,8 +4,8 @@ const TYPE_STRING = 2;
 const MIN_DICT_INDEX = 3;
 
 exports.Packer = function() {
-    const dict = [];
-    const dictMap = {};
+    let dict = [];
+    let dictMap = {};
     let dictIndex = MIN_DICT_INDEX;
     let sequenceId = -1;
     let maxDictSize = 2000;
@@ -30,6 +30,12 @@ exports.Packer = function() {
          * @returns {Object}
          */
         packString,
+
+        /**
+         * Reset the memoization dictionary, allowing consumption by
+         * new Unpacker instances.
+         */
+        reset,
         
         /**
          * Set the maximum dictionary size. Must match the dictionary size
@@ -156,5 +162,12 @@ exports.Packer = function() {
             if (dictIndex >= maxDictSize + MIN_DICT_INDEX)
                 dictIndex = MIN_DICT_INDEX;
         }
+    }
+    
+    function reset() {
+        dict = [];
+        dictMap = {};
+        dictIndex = MIN_DICT_INDEX;
+        sequenceId = -1;
     }
 };
