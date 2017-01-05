@@ -1,7 +1,10 @@
 "use server";
 
 /*global describe it beforeEach afterEach*/
-const jsonm = require("./jsonm");
+const fs = require("fs");
+const jsonm = fs.existsSync(__dirname + "/../src")
+    ? require("../src")
+    : require("../build/babel");
 const assert = require("assert");
 const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;

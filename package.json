@@ -1,12 +1,13 @@
 {
   "name": "jsonm",
-  "version": "1.0.7",
+  "version": "1.0.8-pre",
   "description": "json compressor for packing messages with memoization",
-  "main": "jsonm.js",
+  "main": "build/babel/index.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha .",
-    "browserify": "mkdir -p build; node_modules/browserify/bin/cmd.js -s packer lib/packer.js -o build/packer.js && node_modules/browserify/bin/cmd.js -s unpacker lib/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js -s jsonm jsonm.js -o build/jsonm.js",
-    "prepublish": "npm run browserify"
+    "test": "node_modules/mocha/bin/mocha test",
+    "browserify": "npm run build && browserify -s packer build/babel/packer.js -o build/packer.js && browserify -s unpacker build/babel/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js -s jsonm build/babel/index.js -o build/jsonm.js",
+    "prepublish": "npm run browserify",
+    "build": "babel src --presets babel-preset-es2015 --out-dir build/babel"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,8 @@
   "homepage": "https://github.com/lennartcl/jsonm#readme",
   "devDependencies": {
     "assert": "^1.3.0",
+    "babel-cli": "6",
+    "babel-preset-es2015": "6",
     "browserify": "^12.0.1",
     "mocha": "^3.2.0"
   },
