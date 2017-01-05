@@ -4,7 +4,7 @@
 const fs = require("fs");
 const jsonm = fs.existsSync(__dirname + "/../src")
     ? require("../src")
-    : require("../build/babel");
+    : require("../build/node");
 const assert = require("assert");
 const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
