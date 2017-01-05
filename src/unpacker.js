@@ -1,4 +1,4 @@
-const OLD_MESSAGE = -1;
+const OLD_MESSAGE = -99;
 const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
 const TYPE_STRING = 2;
@@ -87,7 +87,7 @@ exports.Unpacker = function() {
             }
             
             return callback(Object.assign(
-                new Error("Message unpacked out of sequence"), { code: "EOLD" }
+                new Error("Message unpacked out of sequence or already unpacked"), { code: "EOLD" }
             ));
         }
         sequenceId = remoteSequenceId;
