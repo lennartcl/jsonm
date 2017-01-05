@@ -14,7 +14,9 @@ exports.Unpacker = function() {
     return {
         /**
          * Unpack an packed object to its original input.
-         * (If this was a string, a string is returned.)
+         * 
+         * In case you expect messages to be passed in out of order,
+         * please pass a callback function.
          * 
          * @param {Object} packed
          * @param {Function} [callback]
@@ -52,11 +54,25 @@ exports.Unpacker = function() {
         },
     };
     
-    function unpack(packed, callback) {
+    function unpack(packed, callback = null) {
+        if (callback)
+            return unpackAsync(packed, true, callback);
+        
+        let result;
+        unpackAsync(packed, false, (err, _result) => {
+            if (err) throw err;
+            result = _result;
+        });
+        return result;
+    }
+    
+    function unpackAsync(packed, waitForSequence, callback) {
         if (typeof packed === "string")
-            return unpack(JSON.parse(packed));
+            return unpackAsync(JSON.parse(packed), waitForSequence, callback);
         if (!packed)
-            return callback ? callback(null, packed) : packed;
+            return callback(null, packed);
+        if (typeof packed[packed.length - 1] != "number")
+            throw callback(new Error("Packed value expected"));
         
         // Prepare input
         const remoteSequenceId = packed.pop();
@@ -64,17 +80,15 @@ exports.Unpacker = function() {
             dictIndex = MIN_DICT_INDEX;
         }
         else if (remoteSequenceId !== sequenceId + 1) {
-            if (callback && remoteSequenceId > sequenceId + 1) {
+            if (waitForSequence && remoteSequenceId > sequenceId + 1) {
                 // Try after receiving earlier messages
                 packed.push(remoteSequenceId);
                 return pendingUnpacks.push(unpack.bind(null, packed, callback));
             }
             
-            const error = new Error("Message unpacked out of sequence");
-            error.code = "EOLD";
-            if (!callback)
-                throw error;
-            return callback(error);
+            return callback(Object.assign(
+                new Error("Message unpacked out of sequence"), { code: "EOLD" }
+            ));
         }
         sequenceId = remoteSequenceId;
         
@@ -83,17 +97,13 @@ exports.Unpacker = function() {
         packed.push(OLD_MESSAGE);
         
         // Return results
-        if (callback)
-            callback(null, result);
+        callback(null, result);
         
         if (pendingUnpacks.length) {
             const pending = pendingUnpacks.slice();
             pendingUnpacks = [];
             pending.forEach(f => f());
         }
-        
-        if (!callback)
-            return result;
     }
     
     function unpackString(packed) {
