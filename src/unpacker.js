@@ -32,7 +32,7 @@ exports.Unpacker = function() {
          * @param {Object} packed
          * @returns {String}
          */
-        unpackString,
+        $unpackString: unpackString,
         
         /**
          * Set the maximum dictionary size. Must match the dictionary size

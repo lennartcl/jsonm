@@ -211,16 +211,16 @@ describe("jsonm", function() {
         const packed = packer.packString(input);
         assert.deepEqual(packed, ["foo", "bar", "1", "2", 0]);
         
-        const unpacked = unpacker.unpackString(packed);
+        const unpacked = unpacker.$unpackString(packed);
         assert.deepEqual(unpacked, input);
     });
     
-    it("has a symmetrical packString() and unpackString() for strings", () => {
+    it("has a symmetrical packString() and $unpackString() for strings", () => {
         const input = "hello there\nthis is\r\na multi-line string";
         const packed = packer.packString(input);
         assert.deepEqual(packed, [TYPE_STRING, "hello there", "this is\r", "a multi-line string", 0]);
         
-        const unpacked = unpacker.unpackString(packed);
+        const unpacked = unpacker.$unpackString(packed);
         assert.deepEqual(unpacked, input);
     });
     
