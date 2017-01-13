@@ -1,3 +1,4 @@
+/* @flow */
 "use strict";
 
 /*global describe it beforeEach afterEach*/
@@ -244,13 +245,13 @@ describe("jsonm", function() {
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = { 5: 5, 10: 11, 12: 13 };
+        input = { "5": 5, "10": 11, "12": 13 };
         packed = packer.pack(input);
         assert.deepEqual(packed, ["~5", "~10", "~12", 3, "11", "13", 3]);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = { 5: 5, 10: 11, 12: 14 };
+        input = { "5": 5, "10": 11, "12": 14 };
         packed = packer.pack(input);
         assert.deepEqual(packed, [6, 7, 8, "5", 3, "14", 4]);
         unpacked = unpacker.unpack(packed);

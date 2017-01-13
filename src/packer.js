@@ -1,3 +1,5 @@
+/* @flow */
+"use strict";
 const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
 const TYPE_STRING = 2;
@@ -9,6 +11,11 @@ exports.Packer = function() {
     let dictIndex = MIN_DICT_INDEX;
     let sequenceId = -1;
     let maxDictSize = 2000;
+    
+    type PackOptions = {
+        packStringDepth?: number,
+        noSequenceId?: boolean,
+    }
     
     return {
         /**
@@ -43,19 +50,19 @@ exports.Packer = function() {
          * 
          * @param value  New dictionary size, default 2000.
          */
-        setMaxDictSize(value) {
+        setMaxDictSize(value: number) {
             maxDictSize = value;
         },
         
         /**
          * @ignore
          */
-        $getDict() {
+        $getDict(): Array<any> {
             return dict;
         },
     };
     
-    function packString(string, options) {
+    function packString(string: String, options: ?PackOptions) {
         if (typeof string !== "string")
             return pack(string, options);
         let json;
@@ -70,27 +77,27 @@ exports.Packer = function() {
         return pack(json, options);
     }
     
-    function pack(object, options) {
+    function pack(object: any, options: ?PackOptions): Array<any> {
         if (object == null)
             return object;
             
-        const packStringDepth = options && options.packStringDepth;
+        const packStringDepth = options && options.packStringDepth || 0;
         const result = packObjectOrValue(object, packStringDepth);
-
         if (options && options.noSequenceId)
-            return result;
+            return (result : any); // TODO: fix cast
         
         return Array.isArray(result)
             ? result.concat([++sequenceId])
             : [TYPE_VALUE, result, ++sequenceId];
 
-        function packObjectOrValue(object, packStringDepth) {
+        function packObjectOrValue(object: any, packStringDepth: number = 0) {
+            packStringDepth = packStringDepth || 0;
             if (Array.isArray(object))
                 return [TYPE_ARRAY].concat(object.map((o) => {
                     return packObjectOrValue(o, packStringDepth - 1);
                 }));
             if (typeof object === "string" && packStringDepth >= 0)
-                return packString(object, { noSequenceId: true});
+                return packString(object, { noSequenceId: true });
             if (typeof object !== "object" || object == null)
                 return packValue(object);
                 
@@ -135,7 +142,7 @@ exports.Packer = function() {
             }
         }
                 
-        function packValue(value) {
+        function packValue(value: any) {
             const mapKey = typeof value === "string" ? `_${value}` : value;
             const result = dictMap[mapKey];
             if (result == null) {
