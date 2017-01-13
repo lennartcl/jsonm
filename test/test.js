@@ -544,7 +544,7 @@ describe("jsonm", function() {
     });
     
     it("packs error objects with false property values", () => {
-        const error = new Error("Hello thar");
+        const error: Object = new Error("Hello thar");
         error.killed = false;
         const input = [error, false, 1, 1];
         const packed = packer.pack(input);
