@@ -1,2 +1,4 @@
 build/
 flow-typed
+npm-debug.log
+yarn-error.log
