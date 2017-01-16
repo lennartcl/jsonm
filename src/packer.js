@@ -81,7 +81,7 @@ exports.Packer = function() {
         if (object == null)
             return object;
             
-        const packStringDepth = options && options.packStringDepth || 0;
+        const packStringDepth = options && options.packStringDepth || undefined;
         const result = packObjectOrValue(object, packStringDepth);
         if (options && options.noSequenceId)
             return (result : any); // TODO: fix cast
@@ -90,8 +90,7 @@ exports.Packer = function() {
             ? result.concat([++sequenceId])
             : [TYPE_VALUE, result, ++sequenceId];
 
-        function packObjectOrValue(object: any, packStringDepth: number = 0) {
-            packStringDepth = packStringDepth || 0;
+        function packObjectOrValue(object: any, packStringDepth: number = -1) {
             if (Array.isArray(object))
                 return [TYPE_ARRAY].concat(object.map((o) => {
                     return packObjectOrValue(o, packStringDepth - 1);
