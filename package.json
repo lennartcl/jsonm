@@ -4,7 +4,7 @@
   "description": "json compressor for packing messages with memoization",
   "main": "./build/node/index.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha test",
+    "test": "node_modules/mocha/bin/mocha test --compilers js:babel-core/register",
     "flow": "flow check",
     "browserify": "npm run build && browserify -s packer build/node/packer.js -o build/packer.js && browserify -s unpacker build/node/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js -s jsonm build/node/index.js -o build/jsonm.js",
     "prepublish": "npm run flow && npm run test && npm run browserify",
