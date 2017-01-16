@@ -1,5 +1,4 @@
 /* @flow */
-"use strict";
 const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
 const TYPE_STRING = 2;

@@ -1,5 +1,4 @@
 /* @flow */
-"use strict";
 const OLD_MESSAGE = -99;
 const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
