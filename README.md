@@ -44,18 +44,15 @@ into
 ]
 ```
 
-Note how common substrings like `"firstName"`, `"lastName"`, and `"John"` are not
-repeated but replaced by a dictionary index. jsonm also represents objects
-using arrays to avoid quotation signs in pure JSON (e.g., `{"3":"Anna"}`)
-
-The dictionary is built up on the fly and re-used for future messages sent.
-When sending the same message again it'll be even smaller:
+Notice how it eliminates all common substrings like `"firstName"` using memoization!
+jsonm keeps a dictionary to compress future messages even further. 
+Send the message above a second time, and it becomes:
 
 ```
 [0,[3,4,5,6],[3,4,7,8],[3,4,9,10,8,11],[3,4,7,5],1]
 ```
 
-Messages coming later also benefit from the dictionary:
+And
 
 ```
 [
@@ -95,16 +92,9 @@ const unpacker = new jsonm.Unpacker();
 let message = unpacker.unpack(packedMessage);
 ```
 
-Note that both the packer and unpacker maintain a stateful dictionary.
-Don't lose them! When the connection ends, create a new packer or call
-`packer.reset()`.
-
-```
-let packer = new jsonm.Packer();
-packer.pack(message);
-// ... disconnected!
-packer.reset();
-```
+Both the packer and unpacker maintain a stateful dictionary. Don't lose them!
+Create a new packer for each new connection, or use `packer.reset()` to
+reset the dictionary of an existing packer.
 
 ### Working with Strings
 
