@@ -89,8 +89,7 @@ exports.Unpacker = function() {
             }
             
             return callback(Object.assign(
-                // $FlowFixMe
-                new Error("Message unpacked out of sequence or already unpacked"), { code: "EOLD" }
+                (new Error("Message unpacked out of sequence or already unpacked") : any), { code: "EOLD" }
             ));
         }
         sequenceId = remoteSequenceId;

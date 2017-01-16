@@ -62,7 +62,7 @@ exports.Packer = function() {
         },
     };
     
-    function packString(string: String, options: ?PackOptions) {
+    function packString(string: String, options: ?PackOptions): Array<any> {
         if (typeof string !== "string")
             return pack(string, options);
         let json;
@@ -84,7 +84,7 @@ exports.Packer = function() {
         const packStringDepth = options && options.packStringDepth || undefined;
         const result = packObjectOrValue(object, packStringDepth);
         if (options && options.noSequenceId)
-            return (result : any); // TODO: fix cast
+            return (result : any); // HACK: return without sequence id array
         
         return Array.isArray(result)
             ? result.concat([++sequenceId])
