@@ -368,6 +368,32 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input);
     });
     
+    it("handle large message with more values than the dictionary size that contains null", function() {
+        unpacker.setMaxDictSize(50);
+        packer.setMaxDictSize(50);
+        var input = [];
+        for (var i = 0; i < 50; i++) {
+            input.push(i);
+        }
+        for (var i = 0; i < 49; i++) {
+            input.push(i);
+        }
+        for (var i = 0; i < 51; i++) {
+            input.push(i);
+        }
+        for (var i = 0; i < 120; i++) {
+            input.push(i);
+        }
+        var toPack = [null, input];
+        var packed = packer.pack(toPack);
+        var unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, toPack);
+
+        packed = packer.pack(toPack);
+        unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, toPack);
+    });
+
     it("packs null", () => {
         const input = null;
         const packed = packer.pack(input);
@@ -564,7 +590,6 @@ describe("jsonm", function() {
         assert.deepEqual(memoized, [3, 4, 1]);
 
         packer.reset();
-        console.log(packer.$getDict());
         
         const notMemoized = packer.pack(input);
         const notMemoizedCopy = Object.assign([], notMemoized);

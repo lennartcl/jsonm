@@ -151,7 +151,7 @@ exports.Packer = function() {
         }
         
         function addToDict(mapKey, value) {
-            if (dict[dictIndex] != null) {
+            if (dict[dictIndex] !== undefined) {
                 const deleteKey = typeof dict[dictIndex] === "string" ? `_${dict[dictIndex]}` : dict[dictIndex];
                 delete dictMap[deleteKey];
             }
