@@ -4,10 +4,12 @@
   "description": "json compressor for packing messages with memoization",
   "main": "./build/node/index.js",
   "scripts": {
-    "test": "mocha test",
+    "test": "node_modules/mocha/bin/mocha test --compilers js:babel-core/register",
+    "flow": "flow check",
     "browserify": "npm run build && browserify -s packer build/node/packer.js -o build/packer.js && browserify -s unpacker build/node/unpacker.js -o build/unpacker.js && node_modules/browserify/bin/cmd.js -s jsonm build/node/index.js -o build/jsonm.js",
-    "prepublish": "npm run test && npm run browserify",
-    "build": "babel src --presets babel-preset-es2015 --out-dir build/node"
+    "prepublish": "npm run flow && npm run test && npm run browserify",
+    "postinstall": "flow-typed install",
+    "build": "babel src --out-dir build/node && flow-copy-source src build"
   },
   "repository": {
     "type": "git",
@@ -22,8 +24,12 @@
   "devDependencies": {
     "assert": "^1.3.0",
     "babel-cli": "6",
+    "babel-plugin-transform-flow-strip-types": "^6.21.0",
     "babel-preset-es2015": "6",
     "browserify": "^12.0.1",
+    "flow-bin": "^0.37.4",
+    "flow-copy-source": "^1.1.0",
+    "flow-typed": "^2.0.0",
     "mocha": "^3.2.0",
     "optimist": "^0.6.1"
   },

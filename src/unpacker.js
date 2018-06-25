@@ -1,3 +1,4 @@
+/* @flow */
 const OLD_MESSAGE = -99;
 const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
@@ -9,7 +10,7 @@ exports.Unpacker = function() {
     let dictIndex = MIN_DICT_INDEX;
     let maxDictSize = 2000;
     let sequenceId = -1;
-    let pendingUnpacks = [];
+    let pendingUnpacks: Array<Function> = [];
     
     return {
         /**
@@ -42,19 +43,19 @@ exports.Unpacker = function() {
          * 
          * @param value  New dictionary size, default 2000.
          */
-        setMaxDictSize(value) {
+        setMaxDictSize(value: number) {
             maxDictSize = value;
         },
         
         /**
          * @ignore
          */
-        $getDict() {
+        $getDict(): Array<any> {
             return dict;
         },
     };
     
-    function unpack(packed, callback = null) {
+    function unpack(packed: Array<any>, callback: ?Function): any {
         if (callback)
             return unpackAsync(packed, true, callback);
         
@@ -66,7 +67,7 @@ exports.Unpacker = function() {
         return result;
     }
     
-    function unpackAsync(packed, waitForSequence, callback) {
+    function unpackAsync(packed: Array<any>, waitForSequence: boolean, callback: Function) {
         if (typeof packed === "string")
             return unpackAsync(JSON.parse(packed), waitForSequence, callback);
         if (!packed)
@@ -87,7 +88,7 @@ exports.Unpacker = function() {
             }
             
             return callback(Object.assign(
-                new Error("Message unpacked out of sequence or already unpacked"), { code: "EOLD" }
+                (new Error("Message unpacked out of sequence or already unpacked") : any), { code: "EOLD" }
             ));
         }
         sequenceId = remoteSequenceId;
@@ -106,13 +107,13 @@ exports.Unpacker = function() {
         }
     }
     
-    function unpackString(packed) {
+    function unpackString(packed: Array<any>): string {
         return packed[0] === TYPE_STRING
-            ? unpack(packed)
+            ? (unpack(packed): any)
             : JSON.stringify(unpack(packed));
     }
     
-    function unpackObject(object) {
+    function unpackObject(object: any) {
         if (typeof object != "object" || object == null)
             return unpackValue(object);
         if (!object)
@@ -167,6 +168,5 @@ exports.Unpacker = function() {
         dictIndex++;
         if (dictIndex >= maxDictSize + MIN_DICT_INDEX)
             dictIndex = MIN_DICT_INDEX;
-        
     }
 };

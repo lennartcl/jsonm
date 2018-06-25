@@ -1,4 +1,4 @@
-"use strict";
+/* @flow */
 
 /*global describe it beforeEach afterEach*/
 const fs = require("fs");
@@ -244,13 +244,13 @@ describe("jsonm", function() {
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = { 5: 5, 10: 11, 12: 13 };
+        input = { "5": 5, "10": 11, "12": 13 };
         packed = packer.pack(input);
         assert.deepEqual(packed, ["~5", "~10", "~12", 3, "11", "13", 3]);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = { 5: 5, 10: 11, 12: 14 };
+        input = { "5": 5, "10": 11, "12": 14 };
         packed = packer.pack(input);
         assert.deepEqual(packed, [6, 7, 8, "5", 3, "14", 4]);
         unpacked = unpacker.unpack(packed);
@@ -569,7 +569,7 @@ describe("jsonm", function() {
     });
     
     it("packs error objects with false property values", () => {
-        const error = new Error("Hello thar");
+        const error: Object = new Error("Hello thar");
         error.killed = false;
         const input = [error, false, 1, 1];
         const packed = packer.pack(input);
