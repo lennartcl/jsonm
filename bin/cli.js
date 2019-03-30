@@ -28,6 +28,6 @@ let source = args.pack || args.unpack;
 if (source === true)
     source = "/dev/stdin";
 const file = JSON.parse(fs.readFileSync(source, "utf8"));
-const result = args.pack ? jsonm.Packer().pack(file) : jsonm.Unpacker().unpack(file);
+const result = args.pack ? jsonm.Packer().pack(file, { noSequenceId: true }) : jsonm.Unpacker().unpack(file);
 
 console.log(JSON.stringify(result));

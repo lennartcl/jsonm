@@ -26,21 +26,21 @@ jsonm packs
 
 ```
 [
-    { "firstName": "Francis", "lastName": "Doe" },
-    { "firstName": "Anna", "lastName": "Smith" },
-    { "firstName": "Agent", "lastName": "Smith", "isAlias": true },
-    { "firstName": "Anna", "lastName": "Francis" }
+    { "firstName": "Francis", "lastName": "Doe", "address": "Callison Lane 2775, Wilmington" },
+    { "firstName": "Anna", "lastName": "Smith", "address": "Callison Lane 2775, Wilmington" },
+    { "firstName": "Agent", "lastName": "Smith", "address": "Callison Lane 2775, Wilmington", "isAlias": true },
+    { "firstName": "Anna", "lastName": "Francis", "address": "Callison Lane 2776, Wilmington" }
 ]
 ```
 
 into 
 
 ```
-[ 0,
-    ["firstName", "lastName", "Francis", "Doe"],
-    [3, 4, "Anna", "Smith"],
-    [3, 4, "isAlias", "Agent", 8, true],
-    [3, 4, 7, 5]
+[0,
+    ["firstName", "lastName", "address", "Francis", "Doe", "Callison Lane 2775, Wilmington"],
+    [3, 4, 5, "Anna", "Smith", 8],
+    [3, 4, 5, "isAlias", "Agent", 10, 8, true],
+    [3, 4, 5, 9, 6, "Callison Lane 2776, Wilmington"]
 ]
 ```
 
@@ -49,7 +49,7 @@ jsonm keeps a dictionary to compress future messages even further.
 Send the message above a second time, and it becomes:
 
 ```
-[0,[3,4,5,6],[3,4,7,8],[3,4,9,10,8,11],[3,4,7,5],1]
+[0,[3,4,5,6,7,8],[3,4,5,9,10,8],[3,4,5,11,12,10,8,13],[3,4,5,9,6,14],[3,4,5,6,7,8]]
 ```
 
 And
@@ -66,7 +66,7 @@ And
 becomes
 
 ```
-[0,[3,4,"Bryan","Fuller"],[3,4,7,"Adams"],[3,4,"Tim","Peterson"],[3,4,5,16]]
+[0,[3,4,"Bryan","Fuller"],[3,4,9,"Adams"],[3,4,"Tim","Peterson"],[3,4,6,21]]
 ```
 
 By avoiding repetition, jsonm can for example help decrease the size of messages
