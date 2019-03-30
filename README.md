@@ -49,7 +49,7 @@ jsonm keeps a dictionary to compress future messages even further.
 Send the message above a second time, and it becomes:
 
 ```
-[0,[3,4,5,6,7,8],[3,4,5,9,10,8],[3,4,5,11,12,10,8,13],[3,4,5,9,6,14],[3,4,5,6,7,8]]
+[0,[3,4,5,6,7,8],[3,4,5,9,10,8],[3,4,5,11,12,10,8,13],[3,4,5,9,6,14]]
 ```
 
 And
