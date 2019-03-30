@@ -4,9 +4,9 @@ const TYPE_STRING = 2;
 const MIN_DICT_INDEX = 3;
 
 exports.Packer = function() {
-    let dict = [];
-    let dictMap = {};
-    let dictIndex = MIN_DICT_INDEX;
+    let memoized = [];
+    let memoizedMap = new Map();
+    let memoizedIndex = MIN_DICT_INDEX;
     let sequenceId = -1;
     let maxDictSize = 2000;
     
@@ -51,7 +51,7 @@ exports.Packer = function() {
          * @ignore
          */
         $getDict() {
-            return dict;
+            return memoized;
         },
     };
     
@@ -61,8 +61,7 @@ exports.Packer = function() {
         let json;
         try {
             json = JSON.parse(string);
-        }
-        catch (e) {
+        } catch (e) {
             const result = pack(string.split("\n"), options);
             result[0] = TYPE_STRING;
             return result;
@@ -106,11 +105,13 @@ exports.Packer = function() {
             const isError = packErrorKeys(object, results);
             
             // Values
+            let containsObjects = false;
             for (var key in object) {
                 if (!object.hasOwnProperty(key)) continue;
                 
                 const value = object[key];
                 if (typeof value === "object") {
+                    containsObjects = true;
                     results.push(packObjectOrValue(value, packStringDepth - 1));
                 }
                 else if (typeof value === "string") {
@@ -128,18 +129,25 @@ exports.Packer = function() {
             return results;
         }
         
+        /**
+         * Try and memoize an Error object.
+         * 
+         * @returns false if the object was not an Error object
+         */
         function packErrorKeys(object, results) {
             if (object instanceof Error) {
                 results.push(packValue("message"), packValue("stack"));
                 return true;
             }
         }
-                
+        
+        /**
+         * Pack and memoize a scalar value.
+         */
         function packValue(value) {
-            const mapKey = typeof value === "string" ? `_${value}` : value;
-            const result = dictMap[mapKey];
+            const result = memoizedMap.get(value);
             if (result == null) {
-                addToDict(mapKey, value);
+                memoize(value);
                 
                 if (typeof value === "number")
                     return String(value);
@@ -150,24 +158,26 @@ exports.Packer = function() {
             return result;
         }
         
-        function addToDict(mapKey, value) {
-            if (dict[dictIndex] !== undefined) {
-                const deleteKey = typeof dict[dictIndex] === "string" ? `_${dict[dictIndex]}` : dict[dictIndex];
-                delete dictMap[deleteKey];
-            }
-            dictMap[mapKey] = dictIndex;
-            dict[dictIndex] = value;
+        /**
+         * Memoize a value.
+         */
+        function memoize(value) {
+            const oldValue = memoized[memoizedIndex];
+            if (oldValue !== undefined) memoizedMap.delete(oldValue);
             
-            dictIndex++;
-            if (dictIndex >= maxDictSize + MIN_DICT_INDEX)
-                dictIndex = MIN_DICT_INDEX;
+            memoizedMap.set(value, memoizedIndex);
+            memoized[memoizedIndex] = value;
+            
+            memoizedIndex++;
+            if (memoizedIndex >= maxDictSize + MIN_DICT_INDEX)
+                memoizedIndex = MIN_DICT_INDEX;
         }
     }
     
     function reset() {
-        dict = [];
-        dictMap = {};
-        dictIndex = MIN_DICT_INDEX;
+        memoized = [];
+        memoizedMap = new Map();
+        memoizedIndex = MIN_DICT_INDEX;
         sequenceId = -1;
     }
 };

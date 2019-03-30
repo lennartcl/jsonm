@@ -427,6 +427,13 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
         assert(unpacked.foo === undefined);
     });
+
+    it("packs [null, null, undefined, null]", () => {
+        const input = [null, null, undefined, null];
+        const packed = packer.pack(input);
+        const unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
     
     it("packs empty string", () => {
         const input = "";
