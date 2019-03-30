@@ -5,8 +5,8 @@ const TYPE_STRING = 2;
 const MIN_DICT_INDEX = 3;
 
 exports.Unpacker = function() {
-    const dict = [];
-    let dictIndex = MIN_DICT_INDEX;
+    const memoized = [];
+    let memoizedIndex = MIN_DICT_INDEX;
     let maxDictSize = 2000;
     let sequenceId = -1;
     let pendingUnpacks = [];
@@ -50,7 +50,7 @@ exports.Unpacker = function() {
          * @ignore
          */
         $getDict() {
-            return dict;
+            return memoized;
         },
     };
     
@@ -77,7 +77,7 @@ exports.Unpacker = function() {
         // Prepare input
         const remoteSequenceId = packed.pop();
         if (remoteSequenceId === 0) {
-            dictIndex = MIN_DICT_INDEX;
+            memoizedIndex = MIN_DICT_INDEX;
         }
         else if (remoteSequenceId !== sequenceId + 1) {
             if (waitForSequence && remoteSequenceId > sequenceId + 1) {
@@ -130,22 +130,34 @@ exports.Unpacker = function() {
             default:
         }
         
+        // Unpack all keys and values
+        let containsUnmemoized = false;
         const result = {};
         for (var i = 0; i < object.length; i++) {
-            object[i] = typeof object[i] === "object"
-                ? unpackObject(object[i])
-                : unpackValue(object[i]);
+            if (typeof object[i] === "object") {
+                object[i] =  unpackObject(object[i]);
+                containsUnmemoized = true;
+            } else {
+                if (typeof object[i] !== "number")
+                    containsUnmemoized = true;
+                object[i] = unpackValue(object[i]);
+            }
         }
+        
+        // Assign all keys
         const keys = object.length / 2;
         for (var i = 0; i < keys; i++) {
             result[object[i]] = object[i + keys];
         }
+        
+        if (!containsUnmemoized) addToDict(result);
+        
         return result;
     }
     
     function unpackValue(value) {
         if (typeof value === "number") {
-            return dict[value];
+            return memoized[value];
         }
         if (typeof value === "string") {
             if (/^[0-9\.]/.test(value)) {
@@ -163,10 +175,10 @@ exports.Unpacker = function() {
     }
         
     function addToDict(value) {
-        dict[dictIndex] = value;
-        dictIndex++;
-        if (dictIndex >= maxDictSize + MIN_DICT_INDEX)
-            dictIndex = MIN_DICT_INDEX;
+        memoized[memoizedIndex] = value;
+        memoizedIndex++;
+        if (memoizedIndex >= maxDictSize + MIN_DICT_INDEX)
+            memoizedIndex = MIN_DICT_INDEX;
         
     }
 };

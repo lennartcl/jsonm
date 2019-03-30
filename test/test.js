@@ -146,7 +146,7 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input);
         
         packed = packer.pack(input);
-        assert.deepEqual(packed, [3, 4, 5, 6, 2]);
+        assert.deepEqual(packed, [1, 7, 2]);
         unpacked = unpacker.unpack(packed);
         
         assert.deepEqual(unpacked, input);
@@ -609,5 +609,21 @@ describe("jsonm", function() {
         const unpacker2 = new jsonm.Unpacker();
         const unpacked2 = unpacker2.unpack(notMemoizedCopy);
         assert.deepEqual(unpacked2, input);
+    });
+    
+    it("packs repeat non-scalars", () => {
+        const input = [{foo: 1}, {foo: 1}, {foo: 1}];
+        let packed = packer.pack(input);
+        assert.deepEqual(packed, [0,["foo","1"],[3,4],5,0]);
+        let unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs repeat non-scalars but doesn't get confused about strings that look like their keys", () => {
+        const input = [{foo: 1}, {foo: 1}, {foo: 1}, "3,4", "3,4", {foo: 1}];
+        let packed = packer.pack(input);
+        assert.deepEqual(packed,  [0, ["foo", "1"], [ 3, 4 ], 5, "~3,4", 6, 5, 0]);
+        let unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
     });
 });

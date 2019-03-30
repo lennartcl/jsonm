@@ -6,6 +6,7 @@ const MIN_DICT_INDEX = 3;
 exports.Packer = function() {
     let memoized = [];
     let memoizedMap = new Map();
+    let memoizedObjectMap = new Map();
     let memoizedIndex = MIN_DICT_INDEX;
     let sequenceId = -1;
     let maxDictSize = 2000;
@@ -93,7 +94,7 @@ exports.Packer = function() {
             if (typeof object !== "object" || object == null)
                 return packValue(object);
                 
-            const results = [];
+            let results = [];
             
             // Keys
             for (var key in object) {
@@ -102,7 +103,7 @@ exports.Packer = function() {
                 results.push(packValue(key));
             }
             
-            const isError = packErrorKeys(object, results);
+            const isError = tryPackErrorKeys(object, results);
             
             // Values
             let containsObjects = false;
@@ -126,18 +127,31 @@ exports.Packer = function() {
             if (isError)
                 results.push(packObjectOrValue(object.message), packObjectOrValue(object.stack));
             
+            results = tryPackObject(object, results, containsObjects) || results;
+            
             return results;
         }
         
         /**
-         * Try and memoize an Error object.
+         * Try pack and memoize an Error object.
          * 
          * @returns false if the object was not an Error object
          */
-        function packErrorKeys(object, results) {
+        function tryPackErrorKeys(object, results) {
             if (object instanceof Error) {
                 results.push(packValue("message"), packValue("stack"));
                 return true;
+            }
+        }
+        
+        function tryPackObject(object, results, containsObjects) {
+            if (!containsObjects && results.every(r => typeof r === "number")) {
+                const key = results.toString();
+                
+                const existing = memoizedObjectMap.get(key);
+                if (existing) return existing;
+                
+                memoize(results, key);
             }
         }
         
@@ -160,12 +174,21 @@ exports.Packer = function() {
         
         /**
          * Memoize a value.
+         * 
+         * @param value
+         * @param [map]
          */
-        function memoize(value) {
+        function memoize(value, objectKey) {
             const oldValue = memoized[memoizedIndex];
-            if (oldValue !== undefined) memoizedMap.delete(oldValue);
+            if (oldValue !== undefined) {
+                memoizedMap.delete(oldValue);
+                memoizedObjectMap.delete(oldValue);
+            }
             
-            memoizedMap.set(value, memoizedIndex);
+            if (objectKey)
+                memoizedObjectMap.set(objectKey, memoizedIndex);
+            else
+                memoizedMap.set(value, memoizedIndex);
             memoized[memoizedIndex] = value;
             
             memoizedIndex++;

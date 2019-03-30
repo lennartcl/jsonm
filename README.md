@@ -46,13 +46,22 @@ into
 
 Notice how it eliminates all common substrings like `"firstName"` using memoization!
 jsonm keeps a dictionary to compress future messages even further. 
-Send the message above a second time, and it becomes:
+Send the original message above a second time, and it becomes:
 
 ```
 [0,[3,4,5,6,7,8],[3,4,5,9,10,8],[3,4,5,11,12,10,8,13],[3,4,5,9,6,14]]
 ```
 
-And
+jsonm's memozation is adaptive. Send the full message a third time and it becomes
+even smaller:
+
+```
+[0,15,16,17,18]
+```
+
+`18` is now a shorthand for `{ "firstName": "Anna", "lastName": "Francis", "address": "Callison Lane 2776, Wilmington" }`!
+
+Now let's consider a different message:
 
 ```
 [
@@ -63,10 +72,10 @@ And
 ]
 ```
 
-becomes
+this becomes
 
 ```
-[0,[3,4,"Bryan","Fuller"],[3,4,9,"Adams"],[3,4,"Tim","Peterson"],[3,4,6,21]]
+[0,[3,4,"Bryan","Fuller"],[3,4,9,"Adams"],[3,4,"Tim","Peterson"],[3,4,6,23]]
 ```
 
 By avoiding repetition, jsonm can for example help decrease the size of messages
