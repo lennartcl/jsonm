@@ -21,11 +21,11 @@
   },
   "homepage": "https://github.com/lennartcl/jsonm#readme",
   "devDependencies": {
-    "assert": "^1.3.0",
-    "babel-cli": "6",
-    "babel-preset-es2015": "6",
-    "browserify": "^12.0.1",
-    "mocha": "^3.2.0",
+    "assert": "^1.4.1",
+    "babel-cli": "^6",
+    "babel-preset-es2015": "^6",
+    "browserify": "^16.2.3",
+    "mocha": "^6.0.2",
     "optimist": "^0.6.1"
   },
   "dependencies": {}
