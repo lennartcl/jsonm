@@ -658,4 +658,21 @@ describe("jsonm", function() {
         let unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
+    
+    it("doesn't pack very large non-scalars", () => {
+        const large = {a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7};
+        const input = [large, large, large, {x: 1}, {x: 1}, {x: 1}];
+        let packed = packer.pack(input);
+        assert.deepEqual(packed, [0,
+            ["a", "b", "c", "d", "e", "f", "g", "1", "2", "3", "4", "5", "6", "7"],
+            [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+            [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+            ["x", 10],
+            [17, 10],
+            18,
+            0
+        ]);
+        let unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
 });

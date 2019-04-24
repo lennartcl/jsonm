@@ -2,6 +2,7 @@ const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
 const TYPE_STRING = 2;
 const MIN_DICT_INDEX = 3;
+const MAX_PACK_COMPLEX_OBJECT_SIZE = 12;
 
 exports.Packer = function() {
     let memoized = [];
@@ -81,14 +82,14 @@ exports.Packer = function() {
             return result;
         
         return Array.isArray(result)
-            ? result.concat([++sequenceId])
+            ? [...result, ++sequenceId]
             : [TYPE_VALUE, result, ++sequenceId];
 
         function packObjectOrValue(object, packStringDepth) {
             if (Array.isArray(object))
-                return [TYPE_ARRAY].concat(object.map((o) => {
+                return [TYPE_ARRAY, ...object.map(o => {
                     return packObjectOrValue(o, packStringDepth - 1);
-                }));
+                })];
             if (typeof object === "string" && packStringDepth >= 0)
                 return packString(object, { noSequenceId: true});
             if (typeof object !== "object" || object == null)
@@ -145,14 +146,17 @@ exports.Packer = function() {
         }
         
         function tryPackComplexObject(object, results, containsObjects) {
-            if (!containsObjects && results.every(r => typeof r === "number")) {
-                const key = results.toString();
-                
-                const existing = memoizedObjectMap.get(key);
-                if (existing) return existing;
-                
-                memoize(results, key);
-            }
+            if (containsObjects || results.length > MAX_PACK_COMPLEX_OBJECT_SIZE)
+                return;
+            if (!results.every(r => typeof r === "number"))
+                return;
+            
+            const key = results.toString();
+            
+            const existing = memoizedObjectMap.get(key);
+            if (existing) return existing;
+            
+            memoize(results, key);
         }
         
         /**

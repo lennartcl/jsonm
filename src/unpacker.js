@@ -3,6 +3,7 @@ const TYPE_ARRAY = 0;
 const TYPE_VALUE = 1;
 const TYPE_STRING = 2;
 const MIN_DICT_INDEX = 3;
+const MAX_PACK_COMPLEX_OBJECT_SIZE = 12;
 
 exports.Unpacker = function() {
     const memoized = [];
@@ -150,7 +151,8 @@ exports.Unpacker = function() {
             result[object[i]] = object[i + keys];
         }
         
-        if (!containsUnmemoized) addToDict(result);
+        if (!containsUnmemoized && object.length < MAX_PACK_COMPLEX_OBJECT_SIZE)
+            addToDict(result);
         
         return result;
     }
