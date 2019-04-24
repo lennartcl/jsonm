@@ -13,7 +13,7 @@ exports.Unpacker = function() {
     
     return {
         /**
-         * Unpack an packed object to its original input.
+         * Unpack a packed object to its original input.
          * 
          * In case you expect messages to be passed in out of order,
          * please pass a callback function.

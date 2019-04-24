@@ -52,15 +52,6 @@ Send the original message above a second time, and it becomes:
 [0,[3,4,5,6,7,8],[3,4,5,9,10,8],[3,4,5,11,12,10,8,13],[3,4,5,9,6,14]]
 ```
 
-jsonm's memozation is adaptive. Send the full message a third time and it becomes
-even smaller:
-
-```
-[0,15,16,17,18]
-```
-
-`18` is now a shorthand for `{ "firstName": "Anna", "lastName": "Francis", "address": "Callison Lane 2776, Wilmington" }`!
-
 Now let's consider a different message:
 
 ```
