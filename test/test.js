@@ -622,7 +622,39 @@ describe("jsonm", function() {
     it("packs repeat non-scalars but doesn't get confused about strings that look like their keys", () => {
         const input = [{foo: 1}, {foo: 1}, {foo: 1}, "3,4", "3,4", {foo: 1}];
         let packed = packer.pack(input);
-        assert.deepEqual(packed,  [0, ["foo", "1"], [ 3, 4 ], 5, "~3,4", 6, 5, 0]);
+        assert.deepEqual(packed,  [0, ["foo", "1"], [3, 4], 5, "~3,4", 6, 5, 0]);
+        let unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("handles complex repeat non-scalars", () => {
+        const input = [{bar: {foo: 1}}, {bar: {foo: 1}}, {bar: {foo: 1}}, "x", "x"];
+        let packed = packer.pack(input);
+        let unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("handles repeat errors", () => {
+        const input = [new Error("x"), new Error("x"), new Error("x"), "y", "y"];
+        let packed = packer.pack(input);
+        let unpacked = unpacker.unpack(packed);
+        assert.equal(input[0].message, unpacked[0].message);
+        assert.equal(input[0].stack, unpacked[0].stack);
+        assert.equal(input[1].message, unpacked[1].message);
+        assert.equal(input[1].stack, unpacked[1].stack);
+        assert.equal(input[2].message, unpacked[2].message);
+        assert.equal(input[2].stack, unpacked[2].stack);
+        assert.equal(input[3], unpacked[3]);
+        assert.equal(input[3], unpacked[3]);
+        assert.equal(input[4], unpacked[4]);
+    });
+    
+    it("handles objects with tildes and negative number properties", () => {
+        const input = [
+            {"-1": -1}, {"-1": 1}, {"-1": 1},
+            {"~1": "~1"}, {"~1": "~1"}, {"~1": "~1"},
+        ];
+        let packed = packer.pack(input);
         let unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });

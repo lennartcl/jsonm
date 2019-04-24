@@ -93,7 +93,11 @@ exports.Packer = function() {
                 return packString(object, { noSequenceId: true});
             if (typeof object !== "object" || object == null)
                 return packValue(object);
-                
+            
+            return packObject(object, packStringDepth);
+        }
+        
+        function packObject(object, packStringDepth) {
             let results = [];
             
             // Keys
@@ -106,28 +110,24 @@ exports.Packer = function() {
             const isError = tryPackErrorKeys(object, results);
             
             // Values
-            let containsObjects = false;
             for (var key in object) {
                 if (!object.hasOwnProperty(key)) continue;
                 
                 const value = object[key];
                 if (typeof value === "object") {
-                    containsObjects = true;
                     results.push(packObjectOrValue(value, packStringDepth - 1));
-                }
-                else if (typeof value === "string") {
+                } else if (typeof value === "string") {
                     results.push(packStringDepth > 0
                         ? packString(value, { noSequenceId: true})
                         : packValue(value));
-                }
-                else {
+                } else {
                     results.push(packValue(value));
                 }
             }
             if (isError)
                 results.push(packObjectOrValue(object.message), packObjectOrValue(object.stack));
             
-            results = tryPackObject(object, results, containsObjects) || results;
+            results = tryPackComplexObject(object, results) || results;
             
             return results;
         }
@@ -144,7 +144,7 @@ exports.Packer = function() {
             }
         }
         
-        function tryPackObject(object, results, containsObjects) {
+        function tryPackComplexObject(object, results, containsObjects) {
             if (!containsObjects && results.every(r => typeof r === "number")) {
                 const key = results.toString();
                 
