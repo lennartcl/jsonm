@@ -159,6 +159,7 @@ exports.Unpacker = function() {
     
     function unpackValue(value) {
         if (typeof value === "number") {
+            if (value < 0) return -value;
             return memoized[value];
         }
         if (typeof value === "string") {

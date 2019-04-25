@@ -29,10 +29,18 @@ describe("jsonm", function() {
         assert.deepEqual(unpacked, input);
     });
     
-    it("packs large ints as string values", () => {
-        const input = { foo: 1000 };
+    it("packs small ints as negative values", () => {
+        const input = { foo: 100 };
         const packed = packer.pack(input);
-        assert.deepEqual(packed, ["foo", "1000", 0]);
+        assert.deepEqual(packed, ["foo", -100, 0]);
+        const unpacked = unpacker.unpack(packed);
+        assert.deepEqual(unpacked, input);
+    });
+    
+    it("packs large ints as string values", () => {
+        const input = { foo: 9000 };
+        const packed = packer.pack(input);
+        assert.deepEqual(packed, ["foo", "9000", 0]);
         const unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
@@ -120,7 +128,7 @@ describe("jsonm", function() {
     it("packs nested, multi-key objects", () => {
         const input = { foo: 1, bar: 2, baz: { qux: 3 } };
         const packed = packer.pack(input);
-        assert.deepEqual(packed, ["foo", "bar", "baz", "1", "2", ["qux", "3"], 0]);
+        assert.deepEqual(packed, ["foo", "bar", "baz", "1", "2", ["qux", -3], 0]);
         const unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
@@ -227,32 +235,32 @@ describe("jsonm", function() {
     it("has no issues going over a very small dictionary size", () => {
         unpacker.setMaxDictSize(6);
         packer.setMaxDictSize(6);
-        let input = [1, 2, 3, 4];
+        let input = ["1", "2", "3", "4"];
         let packed = packer.pack(input);
         let unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = [7, 8, 1, 2];
+        input = ["7", "8", "1", "2"];
         packed = packer.pack(input);
-        assert.deepEqual(packed, [TYPE_ARRAY, "7", "8", 3, 4, 1]);
+        assert.deepEqual(packed, [TYPE_ARRAY, "~7", "~8", 3, 4, 1]);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = [1, 2, 5, 6, 1, 5];
+        input = ["1", "2", "5", "6", "1", "5"];
         packed = packer.pack(input);
-        assert.deepEqual(packed, [TYPE_ARRAY, 3, 4, "5", "6", "1", 3, 2]);
+        assert.deepEqual(packed, [TYPE_ARRAY, 3, 4, "~5", "~6", "~1", 3, 2]);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = { 5: 5, 10: 11, 12: 13 };
+        input = { "5": "5", "10": "11", "12": "13" };
         packed = packer.pack(input);
-        assert.deepEqual(packed, ["~5", "~10", "~12", 3, "11", "13", 3]);
+        assert.deepEqual(packed, [3, "~10", "~12", 3, "~11", "~13", 3]);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
         
-        input = { 5: 5, 10: 11, 12: 14 };
+        input = { "5": "5", "10": "11", "12": "14" };
         packed = packer.pack(input);
-        assert.deepEqual(packed, [6, 7, 8, "5", 3, "14", 4]);
+        assert.deepEqual(packed, ["~5", 6, 7, 4, 8, "~14", 4]);
         unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
@@ -305,9 +313,9 @@ describe("jsonm", function() {
     it("handles small messages with more values than the dictionary size", () => {
         unpacker.setMaxDictSize(5);
         packer.setMaxDictSize(5);
-        const input = [1,2,3,4,5,1,2,3,4,5,6];
+        const input = ["1","2","3","4","5","1","2","3","4","5","6"];
         let packed = packer.pack(input);
-        assert.deepEqual(packed, [TYPE_ARRAY, "1", "2", "3", "4", "5", 3, 4, 5, 6, 7, "6", 0]);
+        assert.deepEqual(packed, [TYPE_ARRAY, "~1", "~2", "~3", "~4", "~5", 3, 4, 5, 6, 7, "~6", 0]);
         let unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
 
@@ -319,9 +327,9 @@ describe("jsonm", function() {
     it("handles small messages with more values than the dictionary size (2)", () => {
         unpacker.setMaxDictSize(4);
         packer.setMaxDictSize(4);
-        const input = [1,2,3,4,1,2,3,4,1];
+        const input = ["1","2","3","4","1","2","3","4","1"];
         let packed = packer.pack(input);
-        assert.deepEqual(packed, [TYPE_ARRAY, "1", "2", "3", "4", 3, 4, 5, 6, 3, 0]);
+        assert.deepEqual(packed, [TYPE_ARRAY, "~1", "~2", "~3", "~4", 3, 4, 5, 6, 3, 0]);
         let unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
 
@@ -478,7 +486,7 @@ describe("jsonm", function() {
     it("unpacks objects in strings", () => {
         const input = 42;
         const packedString = JSON.stringify(packer.pack(input));
-        assert.deepEqual(packedString, '[1,"42",0]');
+        assert.deepEqual(packedString, '[1,-42,0]');
         const unpacked = unpacker.unpack(packedString);
         assert.deepEqual(unpacked, input, JSON.stringify(unpacked));
     });
@@ -489,7 +497,7 @@ describe("jsonm", function() {
         const input = new Foo();
         input.baz = 3;
         const packed = packer.pack(input);
-        assert.deepEqual(packed, ["baz","3",0]);
+        assert.deepEqual(packed, ["baz", -3, 0]);
         const unpacked = unpacker.unpack(packed);
         assert(!unpacked.bar);
         assert.equal(unpacked.baz, 3);
@@ -549,7 +557,7 @@ describe("jsonm", function() {
     it("packs arrays with nulls", () => {
         const input = [1,2,null,4,5,null,6];
         const packed = packer.pack(input);
-        assert.deepEqual(packed, [TYPE_ARRAY, "1", "2", null, "4", "5", 5, "6", 0]);
+        assert.deepEqual(packed, [TYPE_ARRAY, "1", "2", null, -4, -5, 5, -6, 0]);
         const unpacked = unpacker.unpack(packed);
         assert.deepEqual(unpacked, input);
     });
@@ -651,8 +659,10 @@ describe("jsonm", function() {
     
     it("handles objects with tildes and negative number properties", () => {
         const input = [
-            {"-1": -1}, {"-1": 1}, {"-1": 1},
+            {"-1": -1}, {"-1": -1}, {"-1": -1},
+            {"-5": -5}, {"-5": -5}, {"-5": -5},
             {"~1": "~1"}, {"~1": "~1"}, {"~1": "~1"},
+            {"-5": "-5"}, {"-5": "-5"}, {"-5": "-5"},
         ];
         let packed = packer.pack(input);
         let unpacked = unpacker.unpack(packed);
@@ -664,12 +674,12 @@ describe("jsonm", function() {
         const input = [large, large, large, {x: 1}, {x: 1}, {x: 1}];
         let packed = packer.pack(input);
         assert.deepEqual(packed, [0,
-            ["a", "b", "c", "d", "e", "f", "g", "1", "2", "3", "4", "5", "6", "7"],
-            [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
-            [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+            ["a", "b", "c", "d", "e", "f", "g", "1", "2", -3, -4, -5, -6, -7],
+            [3, 4, 5, 6, 7, 8, 9, 10, 11, -3, -4, -5, -6, -7],
+            [3, 4, 5, 6, 7, 8, 9, 10, 11, -3, -4, -5, -6, -7],
             ["x", 10],
-            [17, 10],
-            18,
+            [12, 10],
+            13,
             0
         ]);
         let unpacked = unpacker.unpack(packed);

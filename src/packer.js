@@ -3,6 +3,7 @@ const TYPE_VALUE = 1;
 const TYPE_STRING = 2;
 const MIN_DICT_INDEX = 3;
 const MAX_PACK_COMPLEX_OBJECT_SIZE = 12;
+const MAX_VERBATIM_INTEGER = 999;
 
 exports.Packer = function() {
     let memoized = [];
@@ -165,6 +166,9 @@ exports.Packer = function() {
         function packValue(value) {
             const result = memoizedMap.get(value);
             if (result == null) {
+                if (value >= MIN_DICT_INDEX && value <= MAX_VERBATIM_INTEGER && Number.isInteger(value))
+                    return -value;
+                
                 memoize(value);
                 
                 if (typeof value === "number")
